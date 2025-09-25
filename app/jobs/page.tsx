@@ -1,426 +1,807 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { motion } from "framer-motion"
-import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Search, Plus, Sun, Moon, Settings, X } from "lucide-react"
 import Link from "next/link"
-import { initializeApp, isAppInitialized } from "@/lib/db-init"
-import { JobFormModal } from "@/components/job-form-modal"
-import { SortableJobsGrid } from "@/components/sortable-jobs-grid"
-import { toast } from "sonner"
-import type { Job } from "@/lib/db"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Textarea } from "@/components/ui/textarea"
+import {
+  Settings,
+  Moon,
+  Sun,
+  Plus,
+  Search,
+  Filter,
+  MoreVertical,
+  Edit,
+  Archive,
+  Trash2,
+  GripVertical,
+} from "lucide-react"
+import { useState, useEffect } from "react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import * as z from "zod"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd"
+import { useToast } from "@/hooks/use-toast"
+import type { Job } from "@/types/job"
 
-interface JobsResponse {
-  jobs: Job[]
-  pagination: {
-    page: number
-    pageSize: number
-    total: number
-    totalPages: number
-  }
-}
+const jobSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  slug: z.string().min(1, "Slug is required"),
+  description: z.string().min(1, "Description is required"),
+  department: z.string().min(1, "Department is required"),
+  location: z.string().min(1, "Location is required"),
+  type: z.enum(["full-time", "part-time", "contract", "internship"]),
+  status: z.enum(["draft", "published", "archived"]),
+  tags: z.string(),
+})
 
-function JobsFilters({
-  search,
-  setSearch,
-  status,
-  setStatus,
-  sort,
-  setSort,
-  activeFilters,
-  clearFilter,
-}: {
-  search: string
-  setSearch: (value: string) => void
-  status: string
-  setStatus: (value: string) => void
-  sort: string
-  setSort: (value: string) => void
-  activeFilters: Array<{ key: string; label: string; value: string }>
-  clearFilter: (key: string) => void
-}) {
-  return (
-    <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search jobs, teams, or tags..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-        <div className="flex gap-2">
-          <Select value={status} onValueChange={setStatus}>
-            <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="archived">Archived</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={sort} onValueChange={setSort}>
-            <SelectTrigger className="w-[160px]">
-              <SelectValue placeholder="Sort by" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="newest">Newest</SelectItem>
-              <SelectItem value="oldest">Oldest</SelectItem>
-              <SelectItem value="most-applicants">Most Applicants</SelectItem>
-              <SelectItem value="least-applicants">Least Applicants</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      {/* Active Filters */}
-      {activeFilters.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {activeFilters.map((filter) => (
-            <Badge key={filter.key} variant="secondary" className="gap-1">
-              {filter.label}: {filter.value}
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-auto p-0 hover:bg-transparent"
-                onClick={() => clearFilter(filter.key)}
-              >
-                <X className="h-3 w-3" />
-              </Button>
-            </Badge>
-          ))}
-        </div>
-      )}
-    </div>
-  )
-}
-
-function JobsSkeleton() {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {Array.from({ length: 6 }).map((_, i) => (
-        <Card key={i} className="p-6">
-          <div className="space-y-4">
-            <div className="flex items-start justify-between">
-              <div className="space-y-2 flex-1">
-                <Skeleton className="h-5 w-3/4" />
-                <Skeleton className="h-4 w-1/2" />
-              </div>
-              <Skeleton className="h-6 w-16" />
-            </div>
-            <Skeleton className="h-8 w-full" />
-            <div className="flex gap-2">
-              <Skeleton className="h-6 w-16" />
-              <Skeleton className="h-6 w-20" />
-              <Skeleton className="h-6 w-14" />
-            </div>
-          </div>
-        </Card>
-      ))}
-    </div>
-  )
-}
+const mockJobs: Job[] = [
+  {
+    id: "1",
+    title: "Senior Frontend Developer",
+    slug: "senior-frontend-developer",
+    description: "We're looking for an experienced frontend developer to join our team.",
+    department: "Engineering",
+    location: "San Francisco, CA",
+    type: "full-time",
+    status: "published",
+    tags: ["React", "TypeScript", "Next.js"],
+    applicants: 24,
+    createdAt: "2024-01-15",
+    order: 1,
+  },
+  {
+    id: "2",
+    title: "Product Manager",
+    slug: "product-manager",
+    description: "Lead product strategy and development for our core platform.",
+    department: "Product",
+    location: "Remote",
+    type: "full-time",
+    status: "published",
+    tags: ["Strategy", "Analytics", "Leadership"],
+    applicants: 18,
+    createdAt: "2024-01-12",
+    order: 2,
+  },
+  {
+    id: "3",
+    title: "UX Designer",
+    slug: "ux-designer",
+    description: "Create beautiful and intuitive user experiences.",
+    department: "Design",
+    location: "New York, NY",
+    type: "full-time",
+    status: "draft",
+    tags: ["Figma", "User Research", "Prototyping"],
+    applicants: 12,
+    createdAt: "2024-01-10",
+    order: 3,
+  },
+  {
+    id: "4",
+    title: "Marketing Intern",
+    slug: "marketing-intern",
+    description: "Support our marketing team with campaigns and content creation.",
+    department: "Marketing",
+    location: "Los Angeles, CA",
+    type: "internship",
+    status: "archived",
+    tags: ["Content", "Social Media", "Analytics"],
+    applicants: 8,
+    createdAt: "2024-01-08",
+    order: 4,
+  },
+]
 
 export default function JobsPage() {
   const [isDarkMode, setIsDarkMode] = useState(false)
-  const [search, setSearch] = useState("")
-  const [status, setStatus] = useState("all")
-  const [sort, setSort] = useState("newest")
-  const [page, setPage] = useState(1)
-  const [isInitialized, setIsInitialized] = useState(false)
-  const [isJobModalOpen, setIsJobModalOpen] = useState(false)
-  const [selectedJob, setSelectedJob] = useState<Job | null>(null)
-  const [modalMode, setModalMode] = useState<"create" | "edit">("create")
-  const queryClient = useQueryClient()
+  const [jobs, setJobs] = useState<Job[]>([])
+  const [filteredJobs, setFilteredJobs] = useState<Job[]>([])
+  const [searchTerm, setSearchTerm] = useState("")
+  const [statusFilter, setStatusFilter] = useState("all")
+  const [currentPage, setCurrentPage] = useState(1)
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [editingJob, setEditingJob] = useState<Job | null>(null)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const { toast } = useToast()
+
+  const jobsPerPage = 6
 
   useEffect(() => {
-    async function initialize() {
-      try {
-        // Check if already initialized
-        if (isAppInitialized()) {
-          console.log("[v0] App already initialized")
-          setIsInitialized(true)
-          return
-        }
-
-        console.log("[v0] Starting app initialization...")
-        await initializeApp()
-        console.log("[v0] App initialization successful")
-        setIsInitialized(true)
-      } catch (error) {
-        console.error("[v0] Failed to initialize app:", error)
-        toast.error("Failed to initialize app. Please refresh the page.")
-        // Retry after a delay
-        setTimeout(() => {
-          initialize()
-        }, 2000)
-      }
-    }
-
-    initialize()
-  }, [])
-
-  // Theme management
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("theme")
-    if (savedTheme === "dark") {
-      setIsDarkMode(true)
-      document.documentElement.classList.add("dark")
+    const savedJobs = localStorage.getItem("talentflow-jobs")
+    if (savedJobs) {
+      const parsedJobs = JSON.parse(savedJobs)
+      setJobs(parsedJobs)
+      setFilteredJobs(parsedJobs)
     } else {
-      setIsDarkMode(false)
-      document.documentElement.classList.remove("dark")
+      setJobs(mockJobs)
+      setFilteredJobs(mockJobs)
+      localStorage.setItem("talentflow-jobs", JSON.stringify(mockJobs))
     }
   }, [])
 
-  const toggleTheme = () => {
-    const newTheme = !isDarkMode
-    setIsDarkMode(newTheme)
-    if (newTheme) {
-      document.documentElement.classList.add("dark")
-      localStorage.setItem("theme", "dark")
-    } else {
-      document.documentElement.classList.remove("dark")
-      localStorage.setItem("theme", "light")
-    }
-  }
+  useEffect(() => {
+    const filtered = jobs.filter((job) => {
+      const matchesSearch =
+        job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        job.department.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        job.tags.some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+      const matchesStatus = statusFilter === "all" || job.status === statusFilter
+      return matchesSearch && matchesStatus
+    })
 
-  // Fetch jobs
-  const { data, isLoading, error } = useQuery<JobsResponse>({
-    queryKey: ["jobs", { search, status, sort, page }],
-    queryFn: async () => {
-      console.log("[v0] Fetching jobs with params:", { search, status, sort, page })
+    // Sort by order
+    filtered.sort((a, b) => a.order - b.order)
+    setFilteredJobs(filtered)
+    setCurrentPage(1)
+  }, [jobs, searchTerm, statusFilter])
 
-      const params = new URLSearchParams({
-        page: page.toString(),
-        pageSize: "12",
-        ...(search && { search }),
-        ...(status !== "all" && { status }),
-        ...(sort && { sort }),
-      })
-
-      const response = await fetch(`/api/jobs?${params}`)
-      console.log("[v0] Jobs API response status:", response.status)
-
-      if (!response.ok) {
-        const errorText = await response.text()
-        console.error("[v0] Jobs API error:", errorText)
-        throw new Error(`Failed to fetch jobs: ${response.status}`)
-      }
-
-      const result = await response.json()
-      console.log("[v0] Jobs fetched successfully:", result.jobs?.length, "jobs")
-      return result
+  const form = useForm<z.infer<typeof jobSchema>>({
+    resolver: zodResolver(jobSchema),
+    defaultValues: {
+      title: "",
+      slug: "",
+      description: "",
+      department: "",
+      location: "",
+      type: "full-time",
+      status: "draft",
+      tags: "",
     },
-    enabled: isInitialized,
-    retry: (failureCount, error) => {
-      console.log("[v0] Query retry attempt:", failureCount, "Error:", error)
-      // Retry up to 3 times with exponential backoff
-      return failureCount < 3
-    },
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   })
 
-  const handleCreateJob = () => {
-    setSelectedJob(null)
-    setModalMode("create")
-    setIsJobModalOpen(true)
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode)
+    document.documentElement.classList.toggle("dark")
   }
 
-  const handleEditJob = (job: Job) => {
-    setSelectedJob(job)
-    setModalMode("edit")
-    setIsJobModalOpen(true)
+  const generateSlug = (title: string) => {
+    return title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "")
   }
 
-  const handleArchive = async (id: number, archived: boolean) => {
+  const isSlugUnique = (slug: string, excludeId?: string) => {
+    return !jobs.some((job) => job.slug === slug && job.id !== excludeId)
+  }
+
+  const onCreateSubmit = (values: z.infer<typeof jobSchema>) => {
+    const slug = generateSlug(values.title)
+    if (!isSlugUnique(slug)) {
+      form.setError("slug", { message: "Slug must be unique" })
+      return
+    }
+
+    const newJob: Job = {
+      id: Date.now().toString(),
+      ...values,
+      slug,
+      tags: values.tags
+        .split(",")
+        .map((tag) => tag.trim())
+        .filter(Boolean),
+      applicants: 0,
+      createdAt: new Date().toISOString().split("T")[0],
+      order: jobs.length + 1,
+    }
+
+    const updatedJobs = [...jobs, newJob]
+    setJobs(updatedJobs)
+    localStorage.setItem("talentflow-jobs", JSON.stringify(updatedJobs))
+    setIsCreateModalOpen(false)
+    form.reset()
+    toast({ title: "Job created successfully!" })
+  }
+
+  const onEditSubmit = (values: z.infer<typeof jobSchema>) => {
+    if (!editingJob) return
+
+    const slug = generateSlug(values.title)
+    if (!isSlugUnique(slug, editingJob.id)) {
+      form.setError("slug", { message: "Slug must be unique" })
+      return
+    }
+
+    const updatedJobs = jobs.map((job) =>
+      job.id === editingJob.id
+        ? {
+            ...job,
+            ...values,
+            slug,
+            tags: values.tags
+              .split(",")
+              .map((tag) => tag.trim())
+              .filter(Boolean),
+          }
+        : job,
+    )
+    setJobs(updatedJobs)
+    localStorage.setItem("talentflow-jobs", JSON.stringify(updatedJobs))
+    setIsEditModalOpen(false)
+    setEditingJob(null)
+    form.reset()
+    toast({ title: "Job updated successfully!" })
+  }
+
+  const toggleArchiveJob = (jobId: string) => {
+    const updatedJobs = jobs.map((job) => {
+      const jobToToggle = job.id === jobId ? job : null
+      return jobToToggle
+        ? { ...jobToToggle, status: jobToToggle.status === "archived" ? "draft" : ("archived" as const) }
+        : job
+    })
+    setJobs(updatedJobs)
+    localStorage.setItem("talentflow-jobs", JSON.stringify(updatedJobs))
+    const jobToNotify = jobs.find((job) => job.id === jobId)
+    toast({ title: jobToNotify?.status === "archived" ? "Job unarchived!" : "Job archived!" })
+  }
+
+  const deleteJob = (jobId: string) => {
+    const updatedJobs = jobs.filter((job) => job.id !== jobId)
+    setJobs(updatedJobs)
+    localStorage.setItem("talentflow-jobs", JSON.stringify(updatedJobs))
+    toast({ title: "Job deleted successfully!" })
+  }
+
+  const onDragEnd = (result: any) => {
+    if (!result.destination) return
+
+    const items = Array.from(filteredJobs)
+    const [reorderedItem] = items.splice(result.source.index, 1)
+    items.splice(result.destination.index, 0, reorderedItem)
+
+    // Update order numbers
+    const reorderedItems = items.map((item, index) => ({
+      ...item,
+      order: index + 1,
+    }))
+
+    // Optimistic update
+    setFilteredJobs(reorderedItems)
+
+    // Update the main jobs array
+    const updatedJobs = jobs.map((job) => {
+      const reorderedJob = reorderedItems.find((item) => item.id === job.id)
+      return reorderedJob || job
+    })
+
     try {
-      const response = await fetch(`/api/jobs/${id}/archive`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ archived }),
-      })
-      if (!response.ok) throw new Error("Failed to archive job")
-
-      // Optimistic update
-      queryClient.invalidateQueries({ queryKey: ["jobs"] })
-      toast.success(`Job ${archived ? "archived" : "unarchived"} successfully!`)
+      setJobs(updatedJobs)
+      localStorage.setItem("talentflow-jobs", JSON.stringify(updatedJobs))
+      toast({ title: "Job order updated!" })
     } catch (error) {
-      console.error("Error archiving job:", error)
-      toast.error("Failed to archive job")
+      // Rollback on failure
+      setFilteredJobs(filteredJobs)
+      toast({ title: "Failed to update order", variant: "destructive" })
     }
   }
 
-  // Active filters for display
-  const activeFilters = [
-    ...(search ? [{ key: "search", label: "Search", value: search }] : []),
-    ...(status !== "all" ? [{ key: "status", label: "Status", value: status }] : []),
-    ...(sort !== "newest" ? [{ key: "sort", label: "Sort", value: sort }] : []),
-  ]
-
-  const clearFilter = (key: string) => {
-    switch (key) {
-      case "search":
-        setSearch("")
-        break
-      case "status":
-        setStatus("all")
-        break
-      case "sort":
-        setSort("newest")
-        break
-    }
-    setPage(1)
+  const openEditModal = (job: Job) => {
+    setEditingJob(job)
+    form.reset({
+      title: job.title,
+      slug: job.slug,
+      description: job.description,
+      department: job.department,
+      location: job.location,
+      type: job.type,
+      status: job.status,
+      tags: job.tags.join(", "),
+    })
+    setIsEditModalOpen(true)
   }
+
+  // Pagination
+  const totalPages = Math.ceil(filteredJobs.length / jobsPerPage)
+  const startIndex = (currentPage - 1) * jobsPerPage
+  const paginatedJobs = filteredJobs.slice(startIndex, startIndex + jobsPerPage)
 
   return (
-    <div className="min-h-screen bg-background transition-colors duration-300">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <motion.header
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-background border-b border-border"
-      >
-        <div className="container mx-auto py-[22px] leading-4 px-[19px]">
-          <div className="flex items-center justify-between mb-0">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center">
-                <div className="w-6 h-6 bg-foreground rounded-full"></div>
-              </div>
-              <h1 className="text-2xl font-bold text-foreground">TALENTFLOW</h1>
+      <header className="border-b bg-card/50 backdrop-blur-sm">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            {/* Logo and Brand */}
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-primary rounded-full"></div>
+              <span className="text-xl font-bold">TALENTFLOW</span>
             </div>
-            <div className="flex items-center gap-3">
-              <Button
-                variant="outline"
-                className="bg-background border-border text-foreground hover:bg-muted px-4 py-2 rounded-full"
-              >
-                <Settings className="h-4 w-4 mr-2" />
-                Settings
+
+            {/* Navigation */}
+            <nav className="flex items-center space-x-1">
+              <Link href="/">
+                <Button variant="ghost" size="sm" className="rounded-full">
+                  Dashboard
+                </Button>
+              </Link>
+              <Button variant="default" size="sm" className="rounded-full">
+                Jobs
               </Button>
-              <Button variant="ghost" size="icon" onClick={toggleTheme} className="text-foreground hover:bg-muted">
+              <Link href="/candidates">
+                <Button variant="ghost" size="sm" className="rounded-full">
+                  Candidates
+                </Button>
+              </Link>
+              <Link href="/assessments">
+                <Button variant="ghost" size="sm" className="rounded-full">
+                  Assessments
+                </Button>
+              </Link>
+            </nav>
+
+            {/* Right side actions */}
+            <div className="flex items-center space-x-2">
+              <Button variant="ghost" size="icon" onClick={toggleDarkMode}>
                 {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
               </Button>
-            </div>
-          </div>
-
-          <div className="flex justify-center gap-[25px]">
-            <Link href="/">
-              <Button
-                variant="outline"
-                className="bg-background border-border text-foreground hover:bg-muted px-6 py-2 rounded-full"
-              >
-                Dashboard
+              <Button variant="ghost" size="icon">
+                <Settings className="h-4 w-4" />
               </Button>
-            </Link>
-            <Button className="bg-foreground text-background hover:bg-foreground/90 px-6 py-2 rounded-full">
-              Jobs
-            </Button>
-            <Button
-              variant="outline"
-              className="bg-background border-border text-foreground hover:bg-muted px-6 py-2 rounded-full"
-            >
-              Candidates
-            </Button>
-            <Button
-              variant="outline"
-              className="bg-background border-border text-foreground hover:bg-muted px-6 py-2 rounded-full"
-            >
-              Assessments
-            </Button>
+            </div>
           </div>
         </div>
-      </motion.header>
+      </header>
 
+      {/* Main Content */}
       <main className="container mx-auto px-6 py-8">
-        {/* Page Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex items-center justify-between mb-8"
-        >
+        {/* Header Section */}
+        <div className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="text-3xl font-bold text-foreground mb-2">Jobs</h2>
-            <p className="text-muted-foreground">{data ? `${data.pagination.total} total jobs` : "Loading jobs..."}</p>
+            <h1 className="text-3xl font-bold mb-2">Jobs</h1>
+            <p className="text-muted-foreground">Manage your job postings and track applications</p>
           </div>
-          <Button className="bg-primary hover:bg-primary/90" onClick={handleCreateJob}>
-            <Plus className="h-4 w-4 mr-2" />
-            Create Job
-          </Button>
-        </motion.div>
 
-        {/* Filters */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="mb-8"
-        >
-          <JobsFilters
-            search={search}
-            setSearch={setSearch}
-            status={status}
-            setStatus={setStatus}
-            sort={sort}
-            setSort={setSort}
-            activeFilters={activeFilters}
-            clearFilter={clearFilter}
-          />
-        </motion.div>
+          <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="h-4 w-4 mr-2" />
+                Create Job
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>Create New Job</DialogTitle>
+              </DialogHeader>
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onCreateSubmit)} className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="title"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Job Title</FormLabel>
+                          <FormControl>
+                            <Input placeholder="e.g. Senior Frontend Developer" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="department"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Department</FormLabel>
+                          <FormControl>
+                            <Input placeholder="e.g. Engineering" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
 
-        {/* Jobs Grid */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-          {isLoading ? (
-            <JobsSkeleton />
-          ) : error ? (
-            <div className="text-center py-12">
-              <p className="text-destructive">Error loading jobs. Please try again.</p>
-            </div>
-          ) : data?.jobs.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground">No jobs found matching your criteria.</p>
-            </div>
-          ) : (
-            <SortableJobsGrid jobs={data?.jobs || []} onArchive={handleArchive} onEdit={handleEditJob} />
-          )}
-        </motion.div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="location"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Location</FormLabel>
+                          <FormControl>
+                            <Input placeholder="e.g. San Francisco, CA" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="type"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Job Type</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select job type" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="full-time">Full Time</SelectItem>
+                              <SelectItem value="part-time">Part Time</SelectItem>
+                              <SelectItem value="contract">Contract</SelectItem>
+                              <SelectItem value="internship">Internship</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Description</FormLabel>
+                        <FormControl>
+                          <Textarea placeholder="Job description..." {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="status"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Status</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select status" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="draft">Draft</SelectItem>
+                              <SelectItem value="published">Published</SelectItem>
+                              <SelectItem value="archived">Archived</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="tags"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Tags</FormLabel>
+                          <FormControl>
+                            <Input placeholder="React, TypeScript, Remote" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div className="flex justify-end space-x-2">
+                    <Button type="button" variant="outline" onClick={() => setIsCreateModalOpen(false)}>
+                      Cancel
+                    </Button>
+                    <Button type="submit">Create Job</Button>
+                  </div>
+                </form>
+              </Form>
+            </DialogContent>
+          </Dialog>
+        </div>
+
+        {/* Filters and Search */}
+        <div className="flex items-center space-x-4 mb-6">
+          <div className="relative flex-1 max-w-sm">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <Input
+              placeholder="Search jobs..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-40">
+              <Filter className="h-4 w-4 mr-2" />
+              <SelectValue placeholder="Filter by status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="draft">Draft</SelectItem>
+              <SelectItem value="published">Published</SelectItem>
+              <SelectItem value="archived">Archived</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Jobs Grid with Drag and Drop */}
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="jobs">
+            {(provided) => (
+              <div
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8"
+              >
+                {paginatedJobs.map((job, index) => (
+                  <Draggable key={job.id} draggableId={job.id} index={index}>
+                    {(provided, snapshot) => (
+                      <Card
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        className={`transition-all duration-200 ${snapshot.isDragging ? "shadow-lg rotate-2" : ""}`}
+                      >
+                        <CardHeader className="pb-3">
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-center space-x-2 mb-2">
+                                <div {...provided.dragHandleProps}>
+                                  <GripVertical className="h-4 w-4 text-muted-foreground cursor-grab" />
+                                </div>
+                                <Badge
+                                  variant={
+                                    job.status === "published"
+                                      ? "default"
+                                      : job.status === "draft"
+                                        ? "secondary"
+                                        : "outline"
+                                  }
+                                >
+                                  {job.status}
+                                </Badge>
+                              </div>
+                              <CardTitle className="text-lg leading-tight">
+                                <Link href={`/jobs/${job.id}`} className="hover:underline">
+                                  {job.title}
+                                </Link>
+                              </CardTitle>
+                              <p className="text-sm text-muted-foreground mt-1">
+                                {job.department} • {job.location}
+                              </p>
+                            </div>
+
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-8 w-8">
+                                  <MoreVertical className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem onClick={() => openEditModal(job)}>
+                                  <Edit className="h-4 w-4 mr-2" />
+                                  Edit
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => toggleArchiveJob(job.id)}>
+                                  <Archive className="h-4 w-4 mr-2" />
+                                  {job.status === "archived" ? "Unarchive" : "Archive"}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => deleteJob(job.id)} className="text-destructive">
+                                  <Trash2 className="h-4 w-4 mr-2" />
+                                  Delete
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
+                        </CardHeader>
+
+                        <CardContent>
+                          <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{job.description}</p>
+
+                          <div className="flex flex-wrap gap-1 mb-4">
+                            {job.tags.map((tag, tagIndex) => (
+                              <Badge key={tagIndex} variant="outline" className="text-xs">
+                                {tag}
+                              </Badge>
+                            ))}
+                          </div>
+
+                          <div className="flex items-center justify-between text-sm text-muted-foreground">
+                            <span>{job.applicants} applicants</span>
+                            <span>{job.createdAt}</span>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
 
         {/* Pagination */}
-        {data && data.pagination.totalPages > 1 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="flex justify-center mt-8 gap-2"
-          >
-            <Button variant="outline" disabled={page === 1} onClick={() => setPage(page - 1)}>
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+            >
               Previous
             </Button>
-            <span className="flex items-center px-4 text-sm text-muted-foreground">
-              Page {page} of {data.pagination.totalPages}
-            </span>
-            <Button variant="outline" disabled={page === data.pagination.totalPages} onClick={() => setPage(page + 1)}>
+
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <Button
+                key={page}
+                variant={currentPage === page ? "default" : "outline"}
+                size="sm"
+                onClick={() => setCurrentPage(page)}
+              >
+                {page}
+              </Button>
+            ))}
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+            >
               Next
             </Button>
-          </motion.div>
+          </div>
         )}
-      </main>
 
-      {/* Job Form Modal */}
-      <JobFormModal
-        isOpen={isJobModalOpen}
-        onClose={() => setIsJobModalOpen(false)}
-        job={selectedJob}
-        mode={modalMode}
-      />
+        {/* Edit Modal */}
+        <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Edit Job</DialogTitle>
+            </DialogHeader>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onEditSubmit)} className="space-y-4">
+                {/* Same form fields as create modal */}
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="title"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Job Title</FormLabel>
+                        <FormControl>
+                          <Input placeholder="e.g. Senior Frontend Developer" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="department"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Department</FormLabel>
+                        <FormControl>
+                          <Input placeholder="e.g. Engineering" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="location"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Location</FormLabel>
+                        <FormControl>
+                          <Input placeholder="e.g. San Francisco, CA" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="type"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Job Type</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select job type" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="full-time">Full Time</SelectItem>
+                            <SelectItem value="part-time">Part Time</SelectItem>
+                            <SelectItem value="contract">Contract</SelectItem>
+                            <SelectItem value="internship">Internship</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="Job description..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="status"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Status</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select status" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="draft">Draft</SelectItem>
+                            <SelectItem value="published">Published</SelectItem>
+                            <SelectItem value="archived">Archived</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="tags"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Tags</FormLabel>
+                        <FormControl>
+                          <Input placeholder="React, TypeScript, Remote" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="flex justify-end space-x-2">
+                  <Button type="button" variant="outline" onClick={() => setIsEditModalOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button type="submit">Update Job</Button>
+                </div>
+              </form>
+            </Form>
+          </DialogContent>
+        </Dialog>
+      </main>
     </div>
   )
 }
