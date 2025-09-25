@@ -33,7 +33,6 @@ import type { Job } from "@/types/job"
 
 const jobSchema = z.object({
   title: z.string().min(1, "Title is required"),
-  slug: z.string().min(1, "Slug is required"),
   description: z.string().min(1, "Description is required"),
   department: z.string().min(1, "Department is required"),
   location: z.string().min(1, "Location is required"),
@@ -177,7 +176,7 @@ export default function JobsPage() {
   const onCreateSubmit = (values: z.infer<typeof jobSchema>) => {
     const slug = generateSlug(values.title)
     if (!isSlugUnique(slug)) {
-      form.setError("slug", { message: "Slug must be unique" })
+      form.setError("title", { message: "A job with this title already exists" })
       return
     }
 
@@ -207,7 +206,7 @@ export default function JobsPage() {
 
     const slug = generateSlug(values.title)
     if (!isSlugUnique(slug, editingJob.id)) {
-      form.setError("slug", { message: "Slug must be unique" })
+      form.setError("title", { message: "A job with this title already exists" })
       return
     }
 
