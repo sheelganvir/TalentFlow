@@ -165,7 +165,7 @@ export default function CandidatesPage() {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-6 py-8">
+      <main className="container mx-auto px-6 py-8 pl-16">
         {/* Page Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-balance">Candidates</h1>

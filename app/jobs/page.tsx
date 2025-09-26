@@ -352,7 +352,7 @@ export default function JobsPage() {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-6 py-8">
+      <main className="container mx-auto px-6 py-8 pl-16">
         {/* Header Section */}
         <div className="flex items-center justify-between mb-8">
           <div>

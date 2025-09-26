@@ -20,7 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable} ml-16`}>
+      <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
         <Suspense>
           <FloatingSidebar />
           {children}

@@ -144,7 +144,7 @@ export default function JobDetailPage() {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-6 py-8">
+      <main className="container mx-auto px-6 py-8 pl-16">
         {/* Back Button */}
         <div className="mb-6">
           <Link href="/jobs">
