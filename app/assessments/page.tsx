@@ -20,81 +20,7 @@ import {
   XCircle,
   AlertCircle,
 } from "lucide-react"
-
-const assessmentsData = [
-  {
-    id: 1,
-    title: "Frontend Developer Technical Assessment",
-    description: "Comprehensive evaluation covering React, JavaScript, and CSS fundamentals",
-    type: "Technical",
-    duration: 90,
-    questions: 25,
-    candidates: 12,
-    status: "Active",
-    createdDate: "2024-01-10",
-    completionRate: 85,
-  },
-  {
-    id: 2,
-    title: "UX Designer Portfolio Review",
-    description: "Design thinking and portfolio assessment for UX positions",
-    type: "Portfolio",
-    duration: 60,
-    questions: 8,
-    candidates: 6,
-    status: "Draft",
-    createdDate: "2024-01-15",
-    completionRate: 0,
-  },
-  {
-    id: 3,
-    title: "Product Manager Case Study",
-    description: "Strategic thinking and product management scenario analysis",
-    type: "Case Study",
-    duration: 120,
-    questions: 5,
-    candidates: 8,
-    status: "Active",
-    createdDate: "2024-01-08",
-    completionRate: 92,
-  },
-  {
-    id: 4,
-    title: "Backend Developer Coding Challenge",
-    description: "Algorithm and system design problems for backend roles",
-    type: "Coding",
-    duration: 180,
-    questions: 15,
-    candidates: 18,
-    status: "Active",
-    createdDate: "2024-01-05",
-    completionRate: 78,
-  },
-  {
-    id: 5,
-    title: "Sales Representative Simulation",
-    description: "Role-playing scenarios and communication skills assessment",
-    type: "Behavioral",
-    duration: 45,
-    questions: 12,
-    candidates: 4,
-    status: "Paused",
-    createdDate: "2024-01-12",
-    completionRate: 67,
-  },
-  {
-    id: 6,
-    title: "Data Analyst SQL Assessment",
-    description: "Database querying and data analysis skills evaluation",
-    type: "Technical",
-    duration: 75,
-    questions: 20,
-    candidates: 9,
-    status: "Active",
-    createdDate: "2024-01-14",
-    completionRate: 89,
-  },
-]
+import { assessmentsData } from "@/data/assessments"
 
 const getStatusColor = (status: string) => {
   switch (status) {
@@ -176,7 +102,7 @@ export default function AssessmentsPage() {
             </div>
 
             {/* Navigation */}
-            <nav className="flex items-center space-x-1">
+            <nav className="flex items-center space-x-4">
               <Link href="/">
                 <Button variant="ghost" size="sm" className="rounded-full">
                   Dashboard

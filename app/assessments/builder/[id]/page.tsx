@@ -27,6 +27,7 @@ import {
   AlignLeft,
 } from "lucide-react"
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd"
+import { getAssessmentById } from "@/data/assessments"
 
 // Question types
 const QUESTION_TYPES = [
@@ -88,8 +89,38 @@ export default function AssessmentBuilderPage() {
   const [previewResponses, setPreviewResponses] = useState<Record<string, any>>({})
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({})
 
-  // Load assessment from localStorage on mount
+  // Load assessment from shared data or localStorage on mount
   useEffect(() => {
+    if (assessmentId !== "new") {
+      const existingAssessment = getAssessmentById(Number(assessmentId))
+      if (existingAssessment) {
+        // Convert the shared data format to builder format
+        const builderAssessment = {
+          id: assessmentId,
+          title: existingAssessment.title,
+          description: existingAssessment.description,
+          type: existingAssessment.type,
+          estimatedDuration: existingAssessment.duration,
+          sections: existingAssessment.sections.map((section) => ({
+            ...section,
+            questions: section.questions.map((question) => ({
+              ...question,
+              sectionId: section.id,
+              conditional: {
+                enabled: !!question.conditionalLogic,
+                dependsOn: question.conditionalLogic?.showIf.questionId || "",
+                condition: question.conditionalLogic?.showIf.operator || "equals",
+                value: question.conditionalLogic?.showIf.value || "",
+              },
+            })),
+          })),
+        }
+        setAssessment(builderAssessment)
+        return
+      }
+    }
+
+    // Fallback to localStorage for new assessments or if shared data not found
     const saved = localStorage.getItem(`assessment_${assessmentId}`)
     if (saved) {
       try {

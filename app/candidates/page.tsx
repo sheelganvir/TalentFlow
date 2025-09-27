@@ -134,7 +134,7 @@ export default function CandidatesPage() {
               <span className="text-xl font-bold">TALENTFLOW</span>
             </div>
 
-            <nav className="flex items-center space-x-1">
+            <nav className="flex items-center space-x-4">
               <Link href="/">
                 <Button variant="ghost" size="sm" className="rounded-full">
                   Dashboard
