@@ -1,5 +1,3 @@
-// <CHANGE> add comprehensive project readme
-
 # TalentFlow – Modern ATS Dashboard
 
 A modern, opinionated Applicant Tracking System (ATS) UI built with Next.js App Router, Tailwind CSS v4, shadcn/ui, and Recharts. It ships with realistic mock data via MSW so you can preview and iterate without a backend.
