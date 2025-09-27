@@ -31,7 +31,7 @@ const assessmentsData = [
     questions: 25,
     candidates: 12,
     status: "Active",
-    createdDate: "2025-09-16",
+    createdDate: "2024-01-10",
     completionRate: 85,
   },
   {
@@ -43,7 +43,7 @@ const assessmentsData = [
     questions: 8,
     candidates: 6,
     status: "Draft",
-    createdDate: "2025-09-22",
+    createdDate: "2024-01-15",
     completionRate: 0,
   },
   {
@@ -55,7 +55,7 @@ const assessmentsData = [
     questions: 5,
     candidates: 8,
     status: "Active",
-    createdDate: "2025-09-18",
+    createdDate: "2024-01-08",
     completionRate: 92,
   },
   {
@@ -67,7 +67,7 @@ const assessmentsData = [
     questions: 15,
     candidates: 18,
     status: "Active",
-    createdDate: "2025-09-25",
+    createdDate: "2024-01-05",
     completionRate: 78,
   },
   {
@@ -79,7 +79,7 @@ const assessmentsData = [
     questions: 12,
     candidates: 4,
     status: "Paused",
-    createdDate: "2025-09-19",
+    createdDate: "2024-01-12",
     completionRate: 67,
   },
   {
@@ -91,7 +91,7 @@ const assessmentsData = [
     questions: 20,
     candidates: 9,
     status: "Active",
-    createdDate: "2025-09-27",
+    createdDate: "2024-01-14",
     completionRate: 89,
   },
 ]
@@ -176,7 +176,7 @@ export default function AssessmentsPage() {
             </div>
 
             {/* Navigation */}
-            <nav className="flex items-center space-x-4">
+            <nav className="flex items-center space-x-1">
               <Link href="/">
                 <Button variant="ghost" size="sm" className="rounded-full">
                   Dashboard
@@ -218,10 +218,12 @@ export default function AssessmentsPage() {
             <h1 className="text-3xl font-bold text-balance">Assessments</h1>
             <p className="text-muted-foreground mt-2">Create and manage candidate assessments</p>
           </div>
-          <Button className="flex items-center space-x-2">
-            <Plus className="h-4 w-4" />
-            <span>Create Assessment</span>
-          </Button>
+          <Link href="/assessments/builder/new">
+            <Button className="flex items-center space-x-2">
+              <Plus className="h-4 w-4" />
+              <span>Create Assessment</span>
+            </Button>
+          </Link>
         </div>
 
         {/* Search and Filter Bar */}
@@ -332,9 +334,11 @@ export default function AssessmentsPage() {
                   <Button size="sm" className="flex-1">
                     View Results
                   </Button>
-                  <Button variant="outline" size="sm" className="flex-1 bg-transparent">
-                    Edit Assessment
-                  </Button>
+                  <Link href={`/assessments/builder/${assessment.id}`}>
+                    <Button variant="outline" size="sm" className="flex-1 bg-transparent">
+                      Edit Assessment
+                    </Button>
+                  </Link>
                 </div>
               </CardContent>
             </Card>
@@ -349,10 +353,12 @@ export default function AssessmentsPage() {
             </div>
             <h3 className="text-lg font-semibold mb-2">No assessments found</h3>
             <p className="text-muted-foreground mb-4">Try adjusting your search or filter criteria</p>
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              Create Your First Assessment
-            </Button>
+            <Link href="/assessments/builder/new">
+              <Button>
+                <Plus className="h-4 w-4 mr-2" />
+                Create Your First Assessment
+              </Button>
+            </Link>
           </div>
         )}
       </main>
