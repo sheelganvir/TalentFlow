@@ -4,8 +4,9 @@ import { GeistSans } from "geist/font/sans"
 import { GeistMono } from "geist/font/mono"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
-import FloatingSidebar from "@/components/ui/floating-sidebar"
+import FloatingSidebar from "@/components/floating-sidebar"
 import { Suspense } from "react"
+import { MSWProvider } from "@/components/msw-provider"
 
 export const metadata: Metadata = {
   title: "TalentFlow",
@@ -21,10 +22,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
-        <Suspense>
-          <FloatingSidebar />
-          {children}
-        </Suspense>
+        <MSWProvider>
+          <Suspense>
+            <FloatingSidebar />
+            {children}
+          </Suspense>
+        </MSWProvider>
         <Analytics />
       </body>
     </html>

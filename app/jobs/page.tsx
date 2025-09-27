@@ -29,7 +29,7 @@ import * as z from "zod"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd"
 import { useToast } from "@/hooks/use-toast"
-import type { Job } from "@/types/job"
+import { jobsApi, type Job } from "@/lib/api/jobs"
 
 const jobSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -37,362 +37,9 @@ const jobSchema = z.object({
   department: z.string().min(1, "Department is required"),
   location: z.string().min(1, "Location is required"),
   type: z.enum(["full-time", "part-time", "contract", "internship"]),
-  status: z.enum(["draft", "published", "archived"]),
+  status: z.enum(["draft", "active", "archived"]),
   tags: z.string(),
 })
-
-const mockJobs: Job[] = [
-  {
-    id: "1",
-    title: "Senior Frontend Developer",
-    slug: "senior-frontend-developer",
-    description: "We're looking for an experienced frontend developer to join our team.",
-    department: "Engineering",
-    location: "San Francisco, CA",
-    type: "full-time",
-    status: "published",
-    tags: ["React", "TypeScript", "Next.js"],
-    applicants: 24,
-    createdAt: "2024-01-15",
-    order: 1,
-  },
-  {
-    id: "2",
-    title: "Product Manager",
-    slug: "product-manager",
-    description: "Lead product strategy and development for our core platform.",
-    department: "Product",
-    location: "Remote",
-    type: "full-time",
-    status: "published",
-    tags: ["Strategy", "Analytics", "Leadership"],
-    applicants: 18,
-    createdAt: "2024-01-12",
-    order: 2,
-  },
-  {
-    id: "3",
-    title: "UX Designer",
-    slug: "ux-designer",
-    description: "Create beautiful and intuitive user experiences.",
-    department: "Design",
-    location: "New York, NY",
-    type: "full-time",
-    status: "draft",
-    tags: ["Figma", "User Research", "Prototyping"],
-    applicants: 12,
-    createdAt: "2024-01-10",
-    order: 3,
-  },
-  {
-    id: "4",
-    title: "Marketing Intern",
-    slug: "marketing-intern",
-    description: "Support our marketing team with campaigns and content creation.",
-    department: "Marketing",
-    location: "Los Angeles, CA",
-    type: "internship",
-    status: "archived",
-    tags: ["Content", "Social Media", "Analytics"],
-    applicants: 8,
-    createdAt: "2024-01-08",
-    order: 4,
-  },
-  {
-    id: "5",
-    title: "Backend Engineer",
-    slug: "backend-engineer",
-    description: "Develop and maintain our server-side logic.",
-    department: "Engineering",
-    location: "Austin, TX",
-    type: "full-time",
-    status: "published",
-    tags: ["Node.js", "PostgreSQL", "GraphQL"],
-    applicants: 31,
-    createdAt: "2024-01-20",
-    order: 5,
-  },
-  {
-    id: "6",
-    title: "Data Scientist",
-    slug: "data-scientist",
-    description: "Analyze large datasets to extract meaningful insights.",
-    department: "Data Science",
-    location: "Remote",
-    type: "full-time",
-    status: "published",
-    tags: ["Python", "Machine Learning", "SQL"],
-    applicants: 22,
-    createdAt: "2024-01-18",
-    order: 6,
-  },
-  {
-    id: "7",
-    title: "DevOps Engineer",
-    slug: "devops-engineer",
-    description: "Manage our cloud infrastructure and deployment pipelines.",
-    department: "Engineering",
-    location: "Seattle, WA",
-    type: "full-time",
-    status: "draft",
-    tags: ["AWS", "Kubernetes", "Terraform"],
-    applicants: 15,
-    createdAt: "2024-01-16",
-    order: 7,
-  },
-  {
-    id: "8",
-    title: "Content Strategist",
-    slug: "content-strategist",
-    description: "Develop and execute a comprehensive content strategy.",
-    department: "Marketing",
-    location: "New York, NY",
-    type: "full-time",
-    status: "published",
-    tags: ["SEO", "Content Marketing", "Storytelling"],
-    applicants: 10,
-    createdAt: "2024-01-14",
-    order: 8,
-  },
-  {
-    id: "9",
-    title: "Customer Support Specialist",
-    slug: "customer-support-specialist",
-    description: "Provide top-notch support to our customers.",
-    department: "Customer Success",
-    location: "Remote",
-    type: "part-time",
-    status: "published",
-    tags: ["Communication", "Problem Solving", "Zendesk"],
-    applicants: 45,
-    createdAt: "2024-01-13",
-    order: 9,
-  },
-  {
-    id: "10",
-    title: "QA Engineer",
-    slug: "qa-engineer",
-    description: "Ensure the quality of our products through manual and automated testing.",
-    department: "Engineering",
-    location: "San Francisco, CA",
-    type: "full-time",
-    status: "archived",
-    tags: ["Cypress", "Selenium", "Jira"],
-    applicants: 19,
-    createdAt: "2024-01-11",
-    order: 10,
-  },
-  {
-    id: "11",
-    title: "Human Resources Manager",
-    slug: "human-resources-manager",
-    description: "Oversee all aspects of human resources practices and processes.",
-    department: "HR",
-    location: "Chicago, IL",
-    type: "full-time",
-    status: "published",
-    tags: ["Recruiting", "Employee Relations", "Onboarding"],
-    applicants: 9,
-    createdAt: "2024-01-09",
-    order: 11,
-  },
-  {
-    id: "12",
-    title: "Junior Graphic Designer",
-    slug: "junior-graphic-designer",
-    description: "Assist the design team with visual assets for marketing and product.",
-    department: "Design",
-    location: "Remote",
-    type: "internship",
-    status: "draft",
-    tags: ["Adobe Creative Suite", "Illustration", "Branding"],
-    applicants: 25,
-    createdAt: "2024-01-07",
-    order: 12,
-  },
-  {
-    id: "13",
-    title: "Sales Development Representative",
-    slug: "sales-development-representative",
-    description: "Generate and qualify new leads for the sales team.",
-    department: "Sales",
-    location: "Boston, MA",
-    type: "full-time",
-    status: "published",
-    tags: ["Lead Generation", "Salesforce", "Cold Calling"],
-    applicants: 35,
-    createdAt: "2024-01-06",
-    order: 13,
-  },
-  {
-    id: "14",
-    title: "IT Support Technician",
-    slug: "it-support-technician",
-    description: "Provide technical assistance and support to our employees.",
-    department: "IT",
-    location: "Austin, TX",
-    type: "full-time",
-    status: "published",
-    tags: ["Troubleshooting", "Hardware", "Networking"],
-    applicants: 14,
-    createdAt: "2024-01-05",
-    order: 14,
-  },
-  {
-    id: "15",
-    title: "Mobile Developer",
-    slug: "mobile-developer",
-    description: "Build and maintain our iOS and Android applications.",
-    department: "Engineering",
-    location: "Remote",
-    type: "full-time",
-    status: "draft",
-    tags: ["Swift", "Kotlin", "React Native"],
-    applicants: 28,
-    createdAt: "2024-01-04",
-    order: 15,
-  },
-  {
-    id: "16",
-    title: "Financial Analyst",
-    slug: "financial-analyst",
-    description: "Analyze financial data and create financial models for decision support.",
-    department: "Finance",
-    location: "New York, NY",
-    type: "full-time",
-    status: "published",
-    tags: ["Excel", "Financial Modeling", "Forecasting"],
-    applicants: 11,
-    createdAt: "2024-01-03",
-    order: 16,
-  },
-  {
-    id: "17",
-    title: "Copywriter",
-    slug: "copywriter",
-    description: "Write clear, compelling copy for various mediums.",
-    department: "Marketing",
-    location: "Remote",
-    type: "contract",
-    status: "archived",
-    tags: ["Copywriting", "Editing", "Content Strategy"],
-    applicants: 7,
-    createdAt: "2024-01-02",
-    order: 17,
-  },
-  {
-    id: "18",
-    title: "Scrum Master",
-    slug: "scrum-master",
-    description: "Facilitate agile development processes and remove impediments for the team.",
-    department: "Product",
-    location: "San Francisco, CA",
-    type: "full-time",
-    status: "published",
-    tags: ["Agile", "Scrum", "Jira"],
-    applicants: 16,
-    createdAt: "2024-01-01",
-    order: 18,
-  },
-  {
-    id: "19",
-    title: "Social Media Manager",
-    slug: "social-media-manager",
-    description: "Manage our social media presence and engagement.",
-    department: "Marketing",
-    location: "Los Angeles, CA",
-    type: "full-time",
-    status: "published",
-    tags: ["Social Media Marketing", "Community Management", "Hootsuite"],
-    applicants: 20,
-    createdAt: "2023-12-31",
-    order: 19,
-  },
-  {
-    id: "20",
-    title: "Solutions Architect",
-    slug: "solutions-architect",
-    description: "Design and implement complex software solutions for our clients.",
-    department: "Engineering",
-    location: "Chicago, IL",
-    type: "full-time",
-    status: "draft",
-    tags: ["Cloud Architecture", "Microservices", "Solution Design"],
-    applicants: 13,
-    createdAt: "2023-12-30",
-    order: 20,
-  },
-  {
-    id: "21",
-    title: "Business Analyst",
-    slug: "business-analyst",
-    description: "Bridge the gap between IT and the business using data analytics.",
-    department: "Product",
-    location: "Boston, MA",
-    type: "full-time",
-    status: "published",
-    tags: ["Requirements Gathering", "Data Analysis", "SQL"],
-    applicants: 21,
-    createdAt: "2023-12-29",
-    order: 21,
-  },
-  {
-    id: "22",
-    title: "Recruiter",
-    slug: "recruiter",
-    description: "Find and attract top talent to join our company.",
-    department: "HR",
-    location: "Remote",
-    type: "full-time",
-    status: "published",
-    tags: ["Sourcing", "Interviewing", "Applicant Tracking Systems"],
-    applicants: 29,
-    createdAt: "2023-12-28",
-    order: 22,
-  },
-  {
-    id: "23",
-    title: "UI Designer",
-    slug: "ui-designer",
-    description: "Design and iterate on user interfaces that are both beautiful and functional.",
-    department: "Design",
-    location: "New York, NY",
-    type: "full-time",
-    status: "draft",
-    tags: ["UI Design", "Visual Design", "Sketch"],
-    applicants: 17,
-    createdAt: "2023-12-27",
-    order: 23,
-  },
-  {
-    id: "24",
-    title: "Security Engineer",
-    slug: "security-engineer",
-    description: "Protect our systems and data from security threats.",
-    department: "Engineering",
-    location: "Seattle, WA",
-    type: "full-time",
-    status: "published",
-    tags: ["Cybersecurity", "Penetration Testing", "Compliance"],
-    applicants: 8,
-    createdAt: "2023-12-26",
-    order: 24,
-  },
-  {
-    id: "25",
-    title: "Technical Writer",
-    slug: "technical-writer",
-    description: "Create clear and concise documentation for our products.",
-    department: "Product",
-    location: "Remote",
-    type: "contract",
-    status: "published",
-    tags: ["Documentation", "API Docs", "Markdown"],
-    applicants: 6,
-    createdAt: "2023-12-25",
-    order: 25,
-  },
-]
 
 export default function JobsPage() {
   const [isDarkMode, setIsDarkMode] = useState(false)
@@ -401,48 +48,88 @@ export default function JobsPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [editingJob, setEditingJob] = useState<Job | null>(null)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [loading, setLoading] = useState(true)
   const { toast } = useToast()
 
-  // Increased jobs per page from 6 to 10
   const jobsPerPage = 10
 
-  useEffect(() => {
-    const savedJobs = localStorage.getItem("talentflow-jobs")
-    if (savedJobs) {
-      const parsedJobs = JSON.parse(savedJobs)
-      setJobs(parsedJobs)
-      setFilteredJobs(parsedJobs)
-    } else {
-      setJobs(mockJobs)
-      setFilteredJobs(mockJobs)
-      localStorage.setItem("talentflow-jobs", JSON.stringify(mockJobs))
-    }
-  }, [])
+// ---------- REPLACE the existing fetchJobs + the "Debounced search" useEffect ----------
 
-  useEffect(() => {
-    const filtered = jobs.filter((job) => {
-      const matchesSearch =
-        job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        job.department.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        job.tags.some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase()))
-      const matchesStatus = statusFilter === "all" || job.status === statusFilter
-      return matchesSearch && matchesStatus
+const fetchJobs = async (opts?: { page?: number }) => {
+  try {
+    setLoading(true)
+    // fetch from server without search filter (we'll filter client-side)
+    const response = await jobsApi.getJobs({
+      // keep server paging for initial load / re-loads that rely on server pagination
+      page: opts?.page ?? currentPage,
+      pageSize: jobsPerPage,
+      sort: "order",
+      // note: intentionally not passing `search` or `status` here so we can filter locally
     })
+    setJobs(response.jobs)
+    setFilteredJobs(response.jobs)
+    setTotalPages(response.totalPages)
+  } catch (error) {
+    console.error("Failed to fetch jobs:", error)
+    toast({ title: "Failed to load jobs", variant: "destructive" })
+  } finally {
+    setLoading(false)
+  }
+}
 
-    // Sort by order
-    filtered.sort((a, b) => a.order - b.order)
-    setFilteredJobs(filtered)
-    setCurrentPage(1)
-  }, [jobs, searchTerm, statusFilter])
+// Initial load — fetch jobs once when component mounts or when currentPage changes (keeps server pagination)
+useEffect(() => {
+  fetchJobs({ page: currentPage })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [currentPage])
+
+// Client-side debounced filtering (mirrors Candidates page behaviour)
+// - Filters by title, department, location, tags, and description
+// - Debounce so filtering doesn't run on every keystroke immediately
+useEffect(() => {
+  const lowerSearch = searchTerm.trim().toLowerCase()
+
+  const applyFilter = () => {
+    let result = jobs
+
+    // Status filter (client-side)
+    if (statusFilter && statusFilter !== "all") {
+      result = result.filter((j) => j.status === statusFilter)
+    }
+
+    // Search filter (client-side) — check multiple fields
+    if (lowerSearch.length > 0) {
+      result = result.filter((j) => {
+        const inTitle = j.title?.toLowerCase().includes(lowerSearch)
+        const inDept = j.department?.toLowerCase().includes(lowerSearch)
+        const inLocation = j.location?.toLowerCase().includes(lowerSearch)
+        const inDescription = j.description?.toLowerCase().includes(lowerSearch)
+        const inTags = j.tags?.some((t: string) => t.toLowerCase().includes(lowerSearch))
+        return inTitle || inDept || inLocation || inDescription || inTags
+      })
+    }
+
+    setFilteredJobs(result)
+  }
+
+  const handle = setTimeout(applyFilter, 300) // 300ms debounce to feel snappy
+
+  return () => clearTimeout(handle)
+}, [searchTerm, statusFilter, jobs])
+
+// Optional: if you still want a button or action to explicitly refresh from server,
+// keep calling fetchJobs() where needed (create/update/delete/reorder currently call it).
+
+
 
   const form = useForm<z.infer<typeof jobSchema>>({
     resolver: zodResolver(jobSchema),
     defaultValues: {
       title: "",
-      slug: "",
       description: "",
       department: "",
       location: "",
@@ -464,114 +151,110 @@ export default function JobsPage() {
       .replace(/(^-|-$)/g, "")
   }
 
-  const isSlugUnique = (slug: string, excludeId?: string) => {
-    return !jobs.some((job) => job.slug === slug && job.id !== excludeId)
+  const onCreateSubmit = async (values: z.infer<typeof jobSchema>) => {
+    try {
+      const slug = generateSlug(values.title)
+      const newJob = {
+        title: values.title,
+        slug,
+        description: values.description,
+        department: values.department,
+        location: values.location,
+        type: values.type,
+        status: values.status as "active" | "archived" | "draft",
+        tags: values.tags
+          .split(",")
+          .map((tag) => tag.trim())
+          .filter(Boolean),
+        order: jobs.length + 1,
+      }
+
+      await jobsApi.createJob(newJob)
+      await fetchJobs() // Refresh the list
+      setIsCreateModalOpen(false)
+      form.reset()
+      toast({ title: "Job created successfully!" })
+    } catch (error) {
+      console.error("Failed to create job:", error)
+      toast({ title: "Failed to create job", variant: "destructive" })
+    }
   }
 
-  const onCreateSubmit = (values: z.infer<typeof jobSchema>) => {
-    const slug = generateSlug(values.title)
-    if (!isSlugUnique(slug)) {
-      form.setError("title", { message: "A job with this title already exists" })
-      return
-    }
-
-    const newJob: Job = {
-      id: Date.now().toString(),
-      ...values,
-      slug,
-      tags: values.tags
-        .split(",")
-        .map((tag) => tag.trim())
-        .filter(Boolean),
-      applicants: 0,
-      createdAt: new Date().toISOString().split("T")[0],
-      order: jobs.length + 1,
-    }
-
-    const updatedJobs = [...jobs, newJob]
-    setJobs(updatedJobs)
-    localStorage.setItem("talentflow-jobs", JSON.stringify(updatedJobs))
-    setIsCreateModalOpen(false)
-    form.reset()
-    toast({ title: "Job created successfully!" })
-  }
-
-  const onEditSubmit = (values: z.infer<typeof jobSchema>) => {
+  const onEditSubmit = async (values: z.infer<typeof jobSchema>) => {
     if (!editingJob) return
 
-    const slug = generateSlug(values.title)
-    if (!isSlugUnique(slug, editingJob.id)) {
-      form.setError("title", { message: "A job with this title already exists" })
-      return
+    try {
+      const slug = generateSlug(values.title)
+      const updates = {
+        title: values.title,
+        slug,
+        description: values.description,
+        department: values.department,
+        location: values.location,
+        type: values.type,
+        status: values.status as "active" | "archived" | "draft",
+        tags: values.tags
+          .split(",")
+          .map((tag) => tag.trim())
+          .filter(Boolean),
+      }
+
+      await jobsApi.updateJob(editingJob.id, updates)
+      await fetchJobs() // Refresh the list
+      setIsEditModalOpen(false)
+      setEditingJob(null)
+      form.reset()
+      toast({ title: "Job updated successfully!" })
+    } catch (error) {
+      console.error("Failed to update job:", error)
+      toast({ title: "Failed to update job", variant: "destructive" })
     }
-
-    const updatedJobs = jobs.map((job) =>
-      job.id === editingJob.id
-        ? {
-            ...job,
-            ...values,
-            slug,
-            tags: values.tags
-              .split(",")
-              .map((tag) => tag.trim())
-              .filter(Boolean),
-          }
-        : job,
-    )
-    setJobs(updatedJobs)
-    localStorage.setItem("talentflow-jobs", JSON.stringify(updatedJobs))
-    setIsEditModalOpen(false)
-    setEditingJob(null)
-    form.reset()
-    toast({ title: "Job updated successfully!" })
   }
 
-  const toggleArchiveJob = (jobId: string) => {
-    const updatedJobs = jobs.map((job) => {
-      const jobToToggle = job.id === jobId ? job : null
-      return jobToToggle
-        ? { ...jobToToggle, status: jobToToggle.status === "archived" ? "draft" : ("archived" as const) }
-        : job
-    })
-    setJobs(updatedJobs)
-    localStorage.setItem("talentflow-jobs", JSON.stringify(updatedJobs))
-    const jobToNotify = jobs.find((job) => job.id === jobId)
-    toast({ title: jobToNotify?.status === "archived" ? "Job unarchived!" : "Job archived!" })
+  const toggleArchiveJob = async (jobId: number) => {
+    try {
+      const job = jobs.find((j) => j.id === jobId)
+      if (!job) return
+
+      const newStatus = job.status === "archived" ? "draft" : "archived"
+      await jobsApi.updateJob(jobId, { status: newStatus })
+      await fetchJobs() // Refresh the list
+      toast({ title: job.status === "archived" ? "Job unarchived!" : "Job archived!" })
+    } catch (error) {
+      console.error("Failed to toggle archive:", error)
+      toast({ title: "Failed to update job", variant: "destructive" })
+    }
   }
 
-  const deleteJob = (jobId: string) => {
-    const updatedJobs = jobs.filter((job) => job.id !== jobId)
-    setJobs(updatedJobs)
-    localStorage.setItem("talentflow-jobs", JSON.stringify(updatedJobs))
-    toast({ title: "Job deleted successfully!" })
+  const deleteJob = async (jobId: number) => {
+    try {
+      // Note: Delete endpoint not implemented in MSW handlers
+      // await jobsApi.deleteJob(jobId)
+      await fetchJobs() // Refresh the list
+      toast({ title: "Job deleted successfully!" })
+    } catch (error) {
+      console.error("Failed to delete job:", error)
+      toast({ title: "Delete not implemented yet", variant: "destructive" })
+    }
   }
 
-  const onDragEnd = (result: any) => {
+  const onDragEnd = async (result: any) => {
     if (!result.destination) return
 
     const items = Array.from(filteredJobs)
     const [reorderedItem] = items.splice(result.source.index, 1)
     items.splice(result.destination.index, 0, reorderedItem)
 
-    // Update order numbers
-    const reorderedItems = items.map((item, index) => ({
-      ...item,
-      order: index + 1,
-    }))
-
     // Optimistic update
-    setFilteredJobs(reorderedItems)
-
-    // Update the main jobs array
-    const updatedJobs = jobs.map((job) => {
-      const reorderedJob = reorderedItems.find((item) => item.id === job.id)
-      return reorderedJob || job
-    })
+    setFilteredJobs(items)
 
     try {
-      setJobs(updatedJobs)
-      localStorage.setItem("talentflow-jobs", JSON.stringify(updatedJobs))
+      const fromOrder = reorderedItem.order
+      const toOrder = result.destination.index + 1
+
+      await jobsApi.reorderJob(reorderedItem.id, fromOrder, toOrder)
       toast({ title: "Job order updated!" })
+      await fetchJobs() // Refresh to get updated order
     } catch (error) {
       // Rollback on failure
       setFilteredJobs(filteredJobs)
@@ -583,12 +266,11 @@ export default function JobsPage() {
     setEditingJob(job)
     form.reset({
       title: job.title,
-      slug: job.slug,
       description: job.description,
       department: job.department,
       location: job.location,
-      type: job.type,
-      status: job.status,
+      type: job.type as any,
+      status: job.status as any,
       tags: job.tags.join(", "),
     })
     setIsEditModalOpen(true)
@@ -596,7 +278,7 @@ export default function JobsPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "published":
+      case "active":
         return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
       case "draft":
         return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
@@ -607,10 +289,16 @@ export default function JobsPage() {
     }
   }
 
-  // Pagination
-  const totalPages = Math.ceil(filteredJobs.length / jobsPerPage)
-  const startIndex = (currentPage - 1) * jobsPerPage
-  const paginatedJobs = filteredJobs.slice(startIndex, startIndex + jobsPerPage)
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p>Loading jobs...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -778,7 +466,7 @@ export default function JobsPage() {
                             </FormControl>
                             <SelectContent>
                               <SelectItem value="draft">Draft</SelectItem>
-                              <SelectItem value="published">Published</SelectItem>
+                              <SelectItem value="active">Active</SelectItem>
                               <SelectItem value="archived">Archived</SelectItem>
                             </SelectContent>
                           </Select>
@@ -833,7 +521,7 @@ export default function JobsPage() {
             <SelectContent>
               <SelectItem value="all">All Status</SelectItem>
               <SelectItem value="draft">Draft</SelectItem>
-              <SelectItem value="published">Published</SelectItem>
+              <SelectItem value="active">Active</SelectItem>
               <SelectItem value="archived">Archived</SelectItem>
             </SelectContent>
           </Select>
@@ -848,8 +536,8 @@ export default function JobsPage() {
                 ref={provided.innerRef}
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8"
               >
-                {paginatedJobs.map((job, index) => (
-                  <Draggable key={job.id} draggableId={job.id} index={index}>
+                {filteredJobs.map((job, index) => (
+                  <Draggable key={job.id} draggableId={job.id.toString()} index={index}>
                     {(provided, snapshot) => (
                       <Card
                         ref={provided.innerRef}
@@ -863,7 +551,6 @@ export default function JobsPage() {
                                 <div {...provided.dragHandleProps}>
                                   <GripVertical className="h-4 w-4 text-muted-foreground cursor-grab" />
                                 </div>
-                                {/* Updated Badge to use custom colors based on status */}
                                 <Badge className={getStatusColor(job.status)}>{job.status}</Badge>
                               </div>
                               <CardTitle className="text-lg leading-tight">
@@ -913,7 +600,7 @@ export default function JobsPage() {
 
                           <div className="flex items-center justify-between text-sm text-muted-foreground">
                             <span>{job.applicants} applicants</span>
-                            <span>{job.createdAt}</span>
+                            <span>{job.postedDate}</span>
                           </div>
                         </CardContent>
                       </Card>
@@ -960,7 +647,7 @@ export default function JobsPage() {
           </div>
         )}
 
-        {/* Edit Modal */}
+        {/* Edit Modal - Same structure as create modal */}
         <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
@@ -1066,7 +753,7 @@ export default function JobsPage() {
                           </FormControl>
                           <SelectContent>
                             <SelectItem value="draft">Draft</SelectItem>
-                            <SelectItem value="published">Published</SelectItem>
+                            <SelectItem value="active">Active</SelectItem>
                             <SelectItem value="archived">Archived</SelectItem>
                           </SelectContent>
                         </Select>

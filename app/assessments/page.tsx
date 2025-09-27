@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -20,7 +20,8 @@ import {
   XCircle,
   AlertCircle,
 } from "lucide-react"
-import { assessmentsData } from "@/data/assessments"
+import { assessmentsApi, type Assessment } from "@/lib/api/assessments"
+import { useToast } from "@/hooks/use-toast"
 
 const getStatusColor = (status: string) => {
   switch (status) {
@@ -74,13 +75,33 @@ export default function AssessmentsPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [typeFilter, setTypeFilter] = useState("All")
   const [statusFilter, setStatusFilter] = useState("All")
+  const [assessments, setAssessments] = useState<Assessment[]>([])
+  const [loading, setLoading] = useState(true)
+  const { toast } = useToast()
+
+  const fetchAssessments = async () => {
+    try {
+      setLoading(true)
+      const data = await assessmentsApi.getAssessments()
+      setAssessments(data)
+    } catch (error) {
+      console.error("Failed to fetch assessments:", error)
+      toast({ title: "Failed to load assessments", variant: "destructive" })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchAssessments()
+  }, [])
 
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode)
     document.documentElement.classList.toggle("dark")
   }
 
-  const filteredAssessments = assessmentsData.filter((assessment) => {
+  const filteredAssessments = assessments.filter((assessment) => {
     const matchesSearch =
       assessment.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       assessment.description.toLowerCase().includes(searchTerm.toLowerCase())
@@ -88,6 +109,17 @@ export default function AssessmentsPage() {
     const matchesStatus = statusFilter === "All" || assessment.status === statusFilter
     return matchesSearch && matchesType && matchesStatus
   })
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p>Loading assessments...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-background transition-colors duration-300">
