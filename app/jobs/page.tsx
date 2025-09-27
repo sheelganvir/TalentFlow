@@ -53,7 +53,7 @@ const mockJobs: Job[] = [
     status: "published",
     tags: ["React", "TypeScript", "Next.js"],
     applicants: 24,
-    createdAt: "2025-09-15",
+    createdAt: "2024-01-15",
     order: 1,
   },
   {
@@ -67,7 +67,7 @@ const mockJobs: Job[] = [
     status: "published",
     tags: ["Strategy", "Analytics", "Leadership"],
     applicants: 18,
-    createdAt: "2025-09-17",
+    createdAt: "2024-01-12",
     order: 2,
   },
   {
@@ -81,7 +81,7 @@ const mockJobs: Job[] = [
     status: "draft",
     tags: ["Figma", "User Research", "Prototyping"],
     applicants: 12,
-    createdAt: "2025-09-19",
+    createdAt: "2024-01-10",
     order: 3,
   },
   {
@@ -95,7 +95,7 @@ const mockJobs: Job[] = [
     status: "archived",
     tags: ["Content", "Social Media", "Analytics"],
     applicants: 8,
-    createdAt: "2025-09-21",
+    createdAt: "2024-01-08",
     order: 4,
   },
   {
@@ -109,7 +109,7 @@ const mockJobs: Job[] = [
     status: "published",
     tags: ["Node.js", "PostgreSQL", "GraphQL"],
     applicants: 31,
-    createdAt: "2025-09-23",
+    createdAt: "2024-01-20",
     order: 5,
   },
   {
@@ -123,7 +123,7 @@ const mockJobs: Job[] = [
     status: "published",
     tags: ["Python", "Machine Learning", "SQL"],
     applicants: 22,
-    createdAt: "2025-09-25",
+    createdAt: "2024-01-18",
     order: 6,
   },
   {
@@ -137,7 +137,7 @@ const mockJobs: Job[] = [
     status: "draft",
     tags: ["AWS", "Kubernetes", "Terraform"],
     applicants: 15,
-    createdAt: "2025-09-27",
+    createdAt: "2024-01-16",
     order: 7,
   },
   {
@@ -151,7 +151,7 @@ const mockJobs: Job[] = [
     status: "published",
     tags: ["SEO", "Content Marketing", "Storytelling"],
     applicants: 10,
-    createdAt: "2025-09-16",
+    createdAt: "2024-01-14",
     order: 8,
   },
   {
@@ -165,7 +165,7 @@ const mockJobs: Job[] = [
     status: "published",
     tags: ["Communication", "Problem Solving", "Zendesk"],
     applicants: 45,
-    createdAt: "2025-09-18",
+    createdAt: "2024-01-13",
     order: 9,
   },
   {
@@ -179,7 +179,7 @@ const mockJobs: Job[] = [
     status: "archived",
     tags: ["Cypress", "Selenium", "Jira"],
     applicants: 19,
-    createdAt: "2025-09-20",
+    createdAt: "2024-01-11",
     order: 10,
   },
   {
@@ -193,7 +193,7 @@ const mockJobs: Job[] = [
     status: "published",
     tags: ["Recruiting", "Employee Relations", "Onboarding"],
     applicants: 9,
-    createdAt: "2025-09-22",
+    createdAt: "2024-01-09",
     order: 11,
   },
   {
@@ -207,7 +207,7 @@ const mockJobs: Job[] = [
     status: "draft",
     tags: ["Adobe Creative Suite", "Illustration", "Branding"],
     applicants: 25,
-    createdAt: "2025-09-24",
+    createdAt: "2024-01-07",
     order: 12,
   },
   {
@@ -221,7 +221,7 @@ const mockJobs: Job[] = [
     status: "published",
     tags: ["Lead Generation", "Salesforce", "Cold Calling"],
     applicants: 35,
-    createdAt: "2025-09-26",
+    createdAt: "2024-01-06",
     order: 13,
   },
   {
@@ -235,7 +235,7 @@ const mockJobs: Job[] = [
     status: "published",
     tags: ["Troubleshooting", "Hardware", "Networking"],
     applicants: 14,
-    createdAt: "2025-09-28",
+    createdAt: "2024-01-05",
     order: 14,
   },
   {
@@ -249,7 +249,7 @@ const mockJobs: Job[] = [
     status: "draft",
     tags: ["Swift", "Kotlin", "React Native"],
     applicants: 28,
-    createdAt: "2025-09-15",
+    createdAt: "2024-01-04",
     order: 15,
   },
   {
@@ -263,7 +263,7 @@ const mockJobs: Job[] = [
     status: "published",
     tags: ["Excel", "Financial Modeling", "Forecasting"],
     applicants: 11,
-    createdAt: "2025-09-17",
+    createdAt: "2024-01-03",
     order: 16,
   },
   {
@@ -277,7 +277,7 @@ const mockJobs: Job[] = [
     status: "archived",
     tags: ["Copywriting", "Editing", "Content Strategy"],
     applicants: 7,
-    createdAt: "2025-09-19",
+    createdAt: "2024-01-02",
     order: 17,
   },
   {
@@ -291,7 +291,7 @@ const mockJobs: Job[] = [
     status: "published",
     tags: ["Agile", "Scrum", "Jira"],
     applicants: 16,
-    createdAt: "2025-09-21",
+    createdAt: "2024-01-01",
     order: 18,
   },
   {
@@ -305,7 +305,7 @@ const mockJobs: Job[] = [
     status: "published",
     tags: ["Social Media Marketing", "Community Management", "Hootsuite"],
     applicants: 20,
-    createdAt: "2025-09-23",
+    createdAt: "2023-12-31",
     order: 19,
   },
   {
@@ -319,7 +319,7 @@ const mockJobs: Job[] = [
     status: "draft",
     tags: ["Cloud Architecture", "Microservices", "Solution Design"],
     applicants: 13,
-    createdAt: "2025-09-25",
+    createdAt: "2023-12-30",
     order: 20,
   },
   {
@@ -333,7 +333,7 @@ const mockJobs: Job[] = [
     status: "published",
     tags: ["Requirements Gathering", "Data Analysis", "SQL"],
     applicants: 21,
-    createdAt: "2025-09-27",
+    createdAt: "2023-12-29",
     order: 21,
   },
   {
@@ -347,7 +347,7 @@ const mockJobs: Job[] = [
     status: "published",
     tags: ["Sourcing", "Interviewing", "Applicant Tracking Systems"],
     applicants: 29,
-    createdAt: "2025-09-16",
+    createdAt: "2023-12-28",
     order: 22,
   },
   {
@@ -361,7 +361,7 @@ const mockJobs: Job[] = [
     status: "draft",
     tags: ["UI Design", "Visual Design", "Sketch"],
     applicants: 17,
-    createdAt: "2025-09-18",
+    createdAt: "2023-12-27",
     order: 23,
   },
   {
@@ -375,7 +375,7 @@ const mockJobs: Job[] = [
     status: "published",
     tags: ["Cybersecurity", "Penetration Testing", "Compliance"],
     applicants: 8,
-    createdAt: "2025-09-20",
+    createdAt: "2023-12-26",
     order: 24,
   },
   {
@@ -389,7 +389,7 @@ const mockJobs: Job[] = [
     status: "published",
     tags: ["Documentation", "API Docs", "Markdown"],
     applicants: 6,
-    createdAt: "2025-09-22",
+    createdAt: "2023-12-25",
     order: 25,
   },
 ]
@@ -406,7 +406,8 @@ export default function JobsPage() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const { toast } = useToast()
 
-  const jobsPerPage = 6
+  // Increased jobs per page from 6 to 10
+  const jobsPerPage = 10
 
   useEffect(() => {
     const savedJobs = localStorage.getItem("talentflow-jobs")
@@ -593,6 +594,19 @@ export default function JobsPage() {
     setIsEditModalOpen(true)
   }
 
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "published":
+        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
+      case "draft":
+        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
+      case "archived":
+        return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300"
+      default:
+        return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300"
+    }
+  }
+
   // Pagination
   const totalPages = Math.ceil(filteredJobs.length / jobsPerPage)
   const startIndex = (currentPage - 1) * jobsPerPage
@@ -611,7 +625,7 @@ export default function JobsPage() {
             </div>
 
             {/* Navigation */}
-            <nav className="flex items-center space-x-1">
+            <nav className="flex items-center space-x-4">
               <Link href="/">
                 <Button variant="ghost" size="sm" className="rounded-full">
                   Dashboard
@@ -849,17 +863,8 @@ export default function JobsPage() {
                                 <div {...provided.dragHandleProps}>
                                   <GripVertical className="h-4 w-4 text-muted-foreground cursor-grab" />
                                 </div>
-                                <Badge
-                                  variant={
-                                    job.status === "published"
-                                      ? "default"
-                                      : job.status === "draft"
-                                        ? "secondary"
-                                        : "outline"
-                                  }
-                                >
-                                  {job.status}
-                                </Badge>
+                                {/* Updated Badge to use custom colors based on status */}
+                                <Badge className={getStatusColor(job.status)}>{job.status}</Badge>
                               </div>
                               <CardTitle className="text-lg leading-tight">
                                 <Link href={`/jobs/${job.id}`} className="hover:underline">

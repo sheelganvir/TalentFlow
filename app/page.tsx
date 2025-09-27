@@ -4,6 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { Settings, Moon, Sun, Plus, Briefcase, Users, UserCheck, FileText, TrendingUp } from "lucide-react"
 import {
   AreaChart,
@@ -47,6 +48,178 @@ const jobOpeningsData = [
   { month: "Jun", openings: 24 },
 ]
 
+const recentJobs = [
+  {
+    id: "1",
+    title: "Senior Frontend Developer",
+    department: "Engineering",
+    status: "published",
+    createdAt: "2024-01-15",
+    applicants: 24,
+  },
+  {
+    id: "5",
+    title: "Backend Engineer",
+    department: "Engineering",
+    status: "published",
+    createdAt: "2024-01-20",
+    applicants: 31,
+  },
+  {
+    id: "7",
+    title: "DevOps Engineer",
+    department: "Engineering",
+    status: "draft",
+    createdAt: "2024-01-16",
+    applicants: 15,
+  },
+  {
+    id: "3",
+    title: "UX Designer",
+    department: "Design",
+    status: "draft",
+    createdAt: "2024-01-10",
+    applicants: 12,
+  },
+  {
+    id: "8",
+    title: "Content Strategist",
+    department: "Marketing",
+    status: "published",
+    createdAt: "2024-01-14",
+    applicants: 10,
+  },
+]
+
+const recentCandidates = [
+  {
+    id: 4,
+    name: "David Kim",
+    position: "DevOps Engineer",
+    status: "Applied",
+    appliedDate: "2024-01-20",
+    avatar: "/professional-engineer.png",
+  },
+  {
+    id: 6,
+    name: "James Wilson",
+    position: "Backend Developer",
+    status: "Screening",
+    appliedDate: "2024-01-19",
+    avatar: "/professional-man-developer.png",
+  },
+  {
+    id: 1,
+    name: "Sarah Johnson",
+    position: "Senior Frontend Developer",
+    status: "Interview",
+    appliedDate: "2024-01-15",
+    avatar: "/professional-woman-diverse.png",
+  },
+  {
+    id: 5,
+    name: "Lisa Thompson",
+    position: "Product Manager",
+    status: "Interview",
+    appliedDate: "2024-01-16",
+    avatar: "/professional-woman-manager.png",
+  },
+  {
+    id: 3,
+    name: "Emily Rodriguez",
+    position: "UX Designer",
+    status: "Offer",
+    appliedDate: "2024-01-12",
+    avatar: "/professional-woman-designer.png",
+  },
+]
+
+const recentAssessments = [
+  {
+    id: 2,
+    title: "UX Designer Portfolio Review",
+    type: "Portfolio",
+    status: "Draft",
+    createdDate: "2024-01-15",
+    candidates: 6,
+  },
+  {
+    id: 6,
+    title: "Data Analyst SQL Assessment",
+    type: "Technical",
+    status: "Active",
+    createdDate: "2024-01-14",
+    candidates: 9,
+  },
+  {
+    id: 5,
+    title: "Sales Representative Simulation",
+    type: "Behavioral",
+    status: "Paused",
+    createdDate: "2024-01-12",
+    candidates: 4,
+  },
+  {
+    id: 1,
+    title: "Frontend Developer Technical Assessment",
+    type: "Technical",
+    status: "Active",
+    createdDate: "2024-01-10",
+    candidates: 12,
+  },
+  {
+    id: 3,
+    title: "Product Manager Case Study",
+    type: "Case Study",
+    status: "Active",
+    createdDate: "2024-01-08",
+    candidates: 8,
+  },
+]
+
+const getJobStatusColor = (status: string) => {
+  switch (status) {
+    case "published":
+      return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
+    case "draft":
+      return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
+    case "archived":
+      return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300"
+    default:
+      return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300"
+  }
+}
+
+const getCandidateStatusColor = (status: string) => {
+  switch (status) {
+    case "Applied":
+      return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300"
+    case "Screening":
+      return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
+    case "Interview":
+      return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300"
+    case "Offer":
+      return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
+    default:
+      return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300"
+  }
+}
+
+const getAssessmentStatusColor = (status: string) => {
+  switch (status) {
+    case "Active":
+      return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
+    case "Draft":
+      return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300"
+    case "Paused":
+      return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
+    case "Archived":
+      return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
+    default:
+      return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300"
+  }
+}
+
 export default function Dashboard() {
   const [isDarkMode, setIsDarkMode] = useState(false)
 
@@ -68,7 +241,7 @@ export default function Dashboard() {
             </div>
 
             {/* Navigation */}
-            <nav className="flex items-center space-x-4">
+            <nav className="flex items-center space-x-1">
               <Button variant="default" size="sm" className="rounded-full">
                 Dashboard
               </Button>
@@ -170,7 +343,7 @@ export default function Dashboard() {
         </div>
 
         {/* Charts Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           {/* Pipeline Distribution */}
           <Card>
             <CardHeader>
@@ -247,6 +420,111 @@ export default function Dashboard() {
                   <Bar dataKey="openings" fill="#8884d8" />
                 </BarChart>
               </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Recent Activity Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Recent Jobs */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between">
+                Recent Jobs
+                <Link href="/jobs">
+                  <Button variant="ghost" size="sm">
+                    View All
+                  </Button>
+                </Link>
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">Latest job postings</p>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {recentJobs.map((job) => (
+                <div key={job.id} className="flex items-center justify-between p-3 rounded-lg border">
+                  <div className="flex-1">
+                    <h4 className="font-medium text-sm">{job.title}</h4>
+                    <p className="text-xs text-muted-foreground">{job.department}</p>
+                    <p className="text-xs text-muted-foreground">{job.applicants} applicants</p>
+                  </div>
+                  <div className="flex flex-col items-end space-y-1">
+                    <Badge className={getJobStatusColor(job.status)} variant="secondary">
+                      {job.status}
+                    </Badge>
+                    <span className="text-xs text-muted-foreground">{job.createdAt}</span>
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          {/* Recent Candidates */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between">
+                Recent Candidates
+                <Link href="/candidates">
+                  <Button variant="ghost" size="sm">
+                    View All
+                  </Button>
+                </Link>
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">Latest candidate applications</p>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {recentCandidates.map((candidate) => (
+                <div key={candidate.id} className="flex items-center justify-between p-3 rounded-lg border">
+                  <div className="flex items-center space-x-3">
+                    <img
+                      src={candidate.avatar || "/placeholder.svg"}
+                      alt={candidate.name}
+                      className="w-8 h-8 rounded-full object-cover"
+                    />
+                    <div>
+                      <h4 className="font-medium text-sm">{candidate.name}</h4>
+                      <p className="text-xs text-muted-foreground">{candidate.position}</p>
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-end space-y-1">
+                    <Badge className={getCandidateStatusColor(candidate.status)} variant="secondary">
+                      {candidate.status}
+                    </Badge>
+                    <span className="text-xs text-muted-foreground">{candidate.appliedDate}</span>
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          {/* Recent Assessments */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between">
+                Recent Assessments
+                <Link href="/assessments">
+                  <Button variant="ghost" size="sm">
+                    View All
+                  </Button>
+                </Link>
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">Latest assessment activities</p>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {recentAssessments.map((assessment) => (
+                <div key={assessment.id} className="flex items-center justify-between p-3 rounded-lg border">
+                  <div className="flex-1">
+                    <h4 className="font-medium text-sm">{assessment.title}</h4>
+                    <p className="text-xs text-muted-foreground">{assessment.type}</p>
+                    <p className="text-xs text-muted-foreground">{assessment.candidates} candidates</p>
+                  </div>
+                  <div className="flex flex-col items-end space-y-1">
+                    <Badge className={getAssessmentStatusColor(assessment.status)} variant="secondary">
+                      {assessment.status}
+                    </Badge>
+                    <span className="text-xs text-muted-foreground">{assessment.createdDate}</span>
+                  </div>
+                </div>
+              ))}
             </CardContent>
           </Card>
         </div>
