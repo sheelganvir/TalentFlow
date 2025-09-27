@@ -241,7 +241,7 @@ export default function Dashboard() {
             </div>
 
             {/* Navigation */}
-            <nav className="flex items-center space-x-4">
+            <nav className="hidden md:flex items-center space-x-4">
               <Button variant="default" size="sm" className="rounded-full">
                 Dashboard
               </Button>
