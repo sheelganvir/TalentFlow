@@ -7,9 +7,9 @@ import { Badge } from "@/components/ui/badge"
 import { Settings, Moon, Sun, ArrowLeft, Edit, Archive, Trash2, MapPin, Building, Calendar, Users } from "lucide-react"
 import { useState, useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
-import type { Job } from "@/types/job"
 import { useToast } from "@/hooks/use-toast"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { jobsApi, type Job } from "@/lib/api/jobs"
 
 export default function JobDetailPage() {
   const [isDarkMode, setIsDarkMode] = useState(false)
@@ -22,21 +22,35 @@ export default function JobDetailPage() {
   const jobId = params.jobId as string
 
   useEffect(() => {
-    const savedJobs = localStorage.getItem("talentflow-jobs")
-    if (savedJobs) {
-      const jobs: Job[] = JSON.parse(savedJobs)
-      const foundJob = jobs.find((j) => j.id === jobId)
-      if (foundJob) {
-        setJob(foundJob)
-      } else {
-        toast({ title: "Job not found", variant: "destructive" })
+    const fetchJob = async () => {
+      try {
+        const numericJobId = Number.parseInt(jobId)
+        if (isNaN(numericJobId)) {
+          toast({ title: "Invalid job ID", variant: "destructive" })
+          router.push("/jobs")
+          return
+        }
+
+        // Fetch all jobs and find the specific one
+        const response = await jobsApi.getJobs()
+        const foundJob = response.jobs.find((j) => j.id === numericJobId)
+
+        if (foundJob) {
+          setJob(foundJob)
+        } else {
+          toast({ title: "Job not found", variant: "destructive" })
+          router.push("/jobs")
+        }
+      } catch (error) {
+        console.error("Failed to fetch job:", error)
+        toast({ title: "Failed to load job", variant: "destructive" })
         router.push("/jobs")
+      } finally {
+        setLoading(false)
       }
-    } else {
-      toast({ title: "No jobs data found", variant: "destructive" })
-      router.push("/jobs")
     }
-    setLoading(false)
+
+    fetchJob()
   }, [jobId, router, toast])
 
   const toggleDarkMode = () => {
@@ -44,31 +58,31 @@ export default function JobDetailPage() {
     document.documentElement.classList.toggle("dark")
   }
 
-  const toggleArchiveJob = () => {
+  const toggleArchiveJob = async () => {
     if (!job) return
 
-    const savedJobs = localStorage.getItem("talentflow-jobs")
-    if (savedJobs) {
-      const jobs: Job[] = JSON.parse(savedJobs)
-      const updatedJobs = jobs.map((j) =>
-        j.id === job.id ? { ...j, status: j.status === "archived" ? "draft" : ("archived" as const) } : j,
-      )
-      localStorage.setItem("talentflow-jobs", JSON.stringify(updatedJobs))
-      setJob((prev) => (prev ? { ...prev, status: prev.status === "archived" ? "draft" : "archived" } : null))
+    try {
+      const newStatus = job.status === "archived" ? "draft" : "archived"
+      await jobsApi.updateJob(job.id, { status: newStatus })
+      setJob((prev) => (prev ? { ...prev, status: newStatus } : null))
       toast({ title: job.status === "archived" ? "Job unarchived!" : "Job archived!" })
+    } catch (error) {
+      console.error("Failed to toggle archive:", error)
+      toast({ title: "Failed to update job", variant: "destructive" })
     }
   }
 
-  const deleteJob = () => {
+  const deleteJob = async () => {
     if (!job) return
 
-    const savedJobs = localStorage.getItem("talentflow-jobs")
-    if (savedJobs) {
-      const jobs: Job[] = JSON.parse(savedJobs)
-      const updatedJobs = jobs.filter((j) => j.id !== job.id)
-      localStorage.setItem("talentflow-jobs", JSON.stringify(updatedJobs))
-      toast({ title: "Job deleted successfully!" })
-      router.push("/jobs")
+    try {
+      // Note: Delete endpoint not implemented in MSW handlers
+      toast({ title: "Delete not implemented yet", variant: "destructive" })
+      // await jobsApi.deleteJob(job.id)
+      // router.push("/jobs")
+    } catch (error) {
+      console.error("Failed to delete job:", error)
+      toast({ title: "Failed to delete job", variant: "destructive" })
     }
   }
 
@@ -159,9 +173,7 @@ export default function JobDetailPage() {
         <div className="flex items-start justify-between mb-8">
           <div className="flex-1">
             <div className="flex items-center space-x-3 mb-4">
-              <Badge
-                variant={job.status === "published" ? "default" : job.status === "draft" ? "secondary" : "outline"}
-              >
+              <Badge variant={job.status === "active" ? "default" : job.status === "draft" ? "secondary" : "outline"}>
                 {job.status}
               </Badge>
               <span className="text-sm text-muted-foreground">#{job.id}</span>
@@ -180,7 +192,7 @@ export default function JobDetailPage() {
               </div>
               <div className="flex items-center space-x-2">
                 <Calendar className="h-4 w-4" />
-                <span>Posted {job.createdAt}</span>
+                <span>Posted {job.postedDate}</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Users className="h-4 w-4" />
@@ -290,7 +302,7 @@ export default function JobDetailPage() {
                 <div>
                   <h4 className="font-medium mb-1">Status</h4>
                   <Badge
-                    variant={job.status === "published" ? "default" : job.status === "draft" ? "secondary" : "outline"}
+                    variant={job.status === "active" ? "default" : job.status === "draft" ? "secondary" : "outline"}
                   >
                     {job.status}
                   </Badge>
