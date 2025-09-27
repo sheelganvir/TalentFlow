@@ -19,7 +19,19 @@ import {
   CheckCircle,
   XCircle,
   AlertCircle,
+  Trash2,
 } from "lucide-react"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import { assessmentsApi, type Assessment } from "@/lib/api/assessments"
 import { useToast } from "@/hooks/use-toast"
 
@@ -77,6 +89,7 @@ export default function AssessmentsPage() {
   const [statusFilter, setStatusFilter] = useState("All")
   const [assessments, setAssessments] = useState<Assessment[]>([])
   const [loading, setLoading] = useState(true)
+  const [deletingId, setDeletingId] = useState<number | null>(null)
   const { toast } = useToast()
 
   const fetchAssessments = async () => {
@@ -109,6 +122,30 @@ export default function AssessmentsPage() {
     const matchesStatus = statusFilter === "All" || assessment.status === statusFilter
     return matchesSearch && matchesType && matchesStatus
   })
+
+  const handleDeleteAssessment = async (assessmentId: number, assessmentTitle: string) => {
+    try {
+      setDeletingId(assessmentId)
+      await assessmentsApi.deleteAssessment(assessmentId)
+
+      // Remove from local state
+      setAssessments((prev) => prev.filter((assessment) => assessment.id !== assessmentId))
+
+      toast({
+        title: "Assessment deleted",
+        description: `"${assessmentTitle}" has been successfully deleted.`,
+      })
+    } catch (error) {
+      console.error("Failed to delete assessment:", error)
+      toast({
+        title: "Failed to delete assessment",
+        description: "Please try again later.",
+        variant: "destructive",
+      })
+    } finally {
+      setDeletingId(null)
+    }
+  }
 
   if (loading) {
     return (
@@ -297,6 +334,40 @@ export default function AssessmentsPage() {
                       Edit Assessment
                     </Button>
                   </Link>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="px-3 text-red-600 hover:text-white hover:bg-red-600 border-red-200 hover:border-red-600 bg-transparent"
+                        disabled={deletingId === assessment.id}
+                      >
+                        {deletingId === assessment.id ? (
+                          <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                        ) : (
+                          <Trash2 className="h-4 w-4" />
+                        )}
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Delete Assessment</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Are you sure you want to delete "{assessment.title}"? This action cannot be undone and will
+                          permanently remove the assessment and all associated data.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => handleDeleteAssessment(assessment.id, assessment.title)}
+                          className="bg-red-600 text-white hover:bg-red-700"
+                        >
+                          Delete Assessment
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               </CardContent>
             </Card>

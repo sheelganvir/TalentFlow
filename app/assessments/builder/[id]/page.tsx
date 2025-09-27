@@ -28,6 +28,7 @@ import {
 } from "lucide-react"
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd"
 import { getAssessmentById } from "@/data/assessments"
+import { assessmentsApi } from "@/lib/api/assessments"
 
 // Question types
 const QUESTION_TYPES = [
@@ -88,13 +89,13 @@ export default function AssessmentBuilderPage() {
   const [selectedQuestion, setSelectedQuestion] = useState<string | null>(null)
   const [previewResponses, setPreviewResponses] = useState<Record<string, any>>({})
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({})
+  const [isSaving, setIsSaving] = useState(false)
+  const [saveMessage, setSaveMessage] = useState("")
 
-  // Load assessment from shared data or localStorage on mount
   useEffect(() => {
     if (assessmentId !== "new") {
       const existingAssessment = getAssessmentById(Number(assessmentId))
       if (existingAssessment) {
-        // Convert the shared data format to builder format
         const builderAssessment = {
           id: assessmentId,
           title: existingAssessment.title,
@@ -120,7 +121,6 @@ export default function AssessmentBuilderPage() {
       }
     }
 
-    // Fallback to localStorage for new assessments or if shared data not found
     const saved = localStorage.getItem(`assessment_${assessmentId}`)
     if (saved) {
       try {
@@ -131,12 +131,10 @@ export default function AssessmentBuilderPage() {
     }
   }, [assessmentId])
 
-  // Save assessment to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem(`assessment_${assessmentId}`, JSON.stringify(assessment))
   }, [assessment, assessmentId])
 
-  // Add new section
   const addSection = () => {
     setAssessment((prev) => ({
       ...prev,
@@ -144,7 +142,6 @@ export default function AssessmentBuilderPage() {
     }))
   }
 
-  // Delete section
   const deleteSection = (sectionId: string) => {
     setAssessment((prev) => ({
       ...prev,
@@ -152,7 +149,6 @@ export default function AssessmentBuilderPage() {
     }))
   }
 
-  // Update section
   const updateSection = (sectionId: string, updates: any) => {
     setAssessment((prev) => ({
       ...prev,
@@ -160,7 +156,6 @@ export default function AssessmentBuilderPage() {
     }))
   }
 
-  // Add question to section
   const addQuestion = (sectionId: string, type: string) => {
     const newQuestion = createDefaultQuestion(type, sectionId)
     setAssessment((prev) => ({
@@ -170,7 +165,6 @@ export default function AssessmentBuilderPage() {
     setSelectedQuestion(newQuestion.id)
   }
 
-  // Delete question
   const deleteQuestion = (questionId: string) => {
     setAssessment((prev) => ({
       ...prev,
@@ -184,7 +178,6 @@ export default function AssessmentBuilderPage() {
     }
   }
 
-  // Update question
   const updateQuestion = (questionId: string, updates: any) => {
     setAssessment((prev) => ({
       ...prev,
@@ -195,7 +188,6 @@ export default function AssessmentBuilderPage() {
     }))
   }
 
-  // Handle drag and drop for questions
   const handleDragEnd = (result: any) => {
     if (!result.destination) return
 
@@ -218,7 +210,6 @@ export default function AssessmentBuilderPage() {
     })
   }
 
-  // Get selected question object
   const getSelectedQuestion = () => {
     if (!selectedQuestion) return null
     for (const section of assessment.sections) {
@@ -228,21 +219,17 @@ export default function AssessmentBuilderPage() {
     return null
   }
 
-  // Comprehensive validation function
   const validateQuestion = (question: any, value: any): string | null => {
-    // Required field validation
     if (question.required) {
       if (!value || (Array.isArray(value) && value.length === 0) || value === "") {
         return "This field is required"
       }
     }
 
-    // Skip validation if field is empty and not required
     if (!value || (Array.isArray(value) && value.length === 0) || value === "") {
       return null
     }
 
-    // Text length validation
     if (question.type === "short-text" || question.type === "long-text") {
       const textValue = String(value)
       if (question.validation.minLength && textValue.length < question.validation.minLength) {
@@ -253,7 +240,6 @@ export default function AssessmentBuilderPage() {
       }
     }
 
-    // Numeric range validation
     if (question.type === "numeric") {
       const numValue = Number(value)
       if (isNaN(numValue)) {
@@ -280,7 +266,6 @@ export default function AssessmentBuilderPage() {
         [question.id]: newValue,
       }))
 
-      // Real-time validation
       const validationError = validateQuestion(question, newValue)
       setValidationErrors((prev) => ({
         ...prev,
@@ -288,7 +273,6 @@ export default function AssessmentBuilderPage() {
       }))
     }
 
-    // Check conditional logic
     if (question.conditional.enabled && question.conditional.dependsOn) {
       const dependentValue = previewResponses[question.conditional.dependsOn]
       const shouldShow = dependentValue === question.conditional.value
@@ -419,14 +403,11 @@ export default function AssessmentBuilderPage() {
     )
   }
 
-  // Form submission validation
   const handleSubmitAssessment = () => {
     const allQuestions = assessment.sections.flatMap((s) => s.questions)
     const errors: Record<string, string> = {}
 
-    // Validate all visible questions
     allQuestions.forEach((question) => {
-      // Check if question should be visible based on conditional logic
       if (question.conditional.enabled && question.conditional.dependsOn) {
         const dependentValue = previewResponses[question.conditional.dependsOn]
         const shouldShow = dependentValue === question.conditional.value
@@ -443,11 +424,9 @@ export default function AssessmentBuilderPage() {
     setValidationErrors(errors)
 
     if (Object.keys(errors).length === 0) {
-      // Form is valid, submit
       alert("Assessment submitted successfully!")
       console.log("Assessment responses:", previewResponses)
     } else {
-      // Scroll to first error
       const firstErrorElement = document.querySelector(".border-red-500")
       if (firstErrorElement) {
         firstErrorElement.scrollIntoView({ behavior: "smooth", block: "center" })
@@ -455,9 +434,56 @@ export default function AssessmentBuilderPage() {
     }
   }
 
+  const handleSaveAssessment = async () => {
+    setIsSaving(true)
+    setSaveMessage("")
+
+    try {
+      const apiAssessment = {
+        id: assessmentId === "new" ? Date.now() : Number(assessmentId),
+        title: assessment.title,
+        description: assessment.description,
+        type: assessment.type,
+        duration: assessment.estimatedDuration,
+        questions: assessment.sections.reduce((total, section) => total + section.questions.length, 0),
+        candidates: 0,
+        status: "Draft",
+        createdDate: new Date().toISOString().split("T")[0],
+        completionRate: 0,
+        sections: assessment.sections.map((section) => ({
+          ...section,
+          questions: section.questions.map((question) => ({
+            ...question,
+            conditionalLogic: question.conditional.enabled
+              ? {
+                  showIf: {
+                    questionId: question.conditional.dependsOn,
+                    operator: question.conditional.condition,
+                    value: question.conditional.value,
+                  },
+                }
+              : undefined,
+          })),
+        })),
+      }
+
+      await assessmentsApi.saveAssessment(1, apiAssessment)
+
+      setSaveMessage("Assessment saved successfully!")
+
+      setTimeout(() => setSaveMessage(""), 3000)
+    } catch (error) {
+      console.error("Failed to save assessment:", error)
+      setSaveMessage("Failed to save assessment. Please try again.")
+
+      setTimeout(() => setSaveMessage(""), 5000)
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
@@ -493,10 +519,17 @@ export default function AssessmentBuilderPage() {
                   Preview
                 </Button>
               </div>
-              <Button>
-                <Save className="h-4 w-4 mr-2" />
-                Save Assessment
-              </Button>
+              <div className="flex items-center space-x-2">
+                <Button onClick={handleSaveAssessment} disabled={isSaving}>
+                  <Save className="h-4 w-4 mr-2" />
+                  {isSaving ? "Saving..." : "Save Assessment"}
+                </Button>
+                {saveMessage && (
+                  <span className={`text-sm ${saveMessage.includes("success") ? "text-green-600" : "text-red-600"}`}>
+                    {saveMessage}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -505,9 +538,7 @@ export default function AssessmentBuilderPage() {
       <div className="container mx-auto px-6 py-6">
         {activeView === "builder" ? (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left Panel - Assessment Structure */}
             <div className="lg:col-span-2 space-y-6">
-              {/* Assessment Settings */}
               <Card>
                 <CardHeader>
                   <CardTitle>Assessment Settings</CardTitle>
@@ -564,7 +595,6 @@ export default function AssessmentBuilderPage() {
                 </CardContent>
               </Card>
 
-              {/* Sections and Questions */}
               <DragDropContext onDragEnd={handleDragEnd}>
                 {assessment.sections.map((section, sectionIndex) => (
                   <Card key={section.id}>
@@ -657,7 +687,6 @@ export default function AssessmentBuilderPage() {
                         )}
                       </Droppable>
 
-                      {/* Add Question Buttons */}
                       <div className="mt-4 pt-4 border-t">
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                           {QUESTION_TYPES.map((type) => {
@@ -682,14 +711,12 @@ export default function AssessmentBuilderPage() {
                 ))}
               </DragDropContext>
 
-              {/* Add Section Button */}
               <Button variant="outline" onClick={addSection} className="w-full bg-transparent">
                 <Plus className="h-4 w-4 mr-2" />
                 Add Section
               </Button>
             </div>
 
-            {/* Right Panel - Question Editor */}
             <div className="space-y-6">
               {selectedQuestion ? (
                 <QuestionEditor
@@ -708,7 +735,6 @@ export default function AssessmentBuilderPage() {
             </div>
           </div>
         ) : (
-          /* Preview Mode */
           <div className="max-w-4xl mx-auto">
             <Card>
               <CardHeader>
@@ -752,7 +778,6 @@ export default function AssessmentBuilderPage() {
   )
 }
 
-// Question Editor Component
 function QuestionEditor({ question, onUpdate, allQuestions }: any) {
   if (!question) return null
 
@@ -785,7 +810,6 @@ function QuestionEditor({ question, onUpdate, allQuestions }: any) {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Basic Settings */}
         <div>
           <Label htmlFor="question-title">Question Title</Label>
           <Input
@@ -816,7 +840,6 @@ function QuestionEditor({ question, onUpdate, allQuestions }: any) {
           <Label htmlFor="required">Required question</Label>
         </div>
 
-        {/* Question Type Specific Settings */}
         {(question.type === "single-choice" || question.type === "multi-choice") && (
           <div>
             <Label>Answer Options</Label>
@@ -843,7 +866,6 @@ function QuestionEditor({ question, onUpdate, allQuestions }: any) {
           </div>
         )}
 
-        {/* Validation Settings */}
         {(question.type === "short-text" || question.type === "long-text") && (
           <div className="space-y-3">
             <Label>Text Validation</Label>
@@ -922,7 +944,6 @@ function QuestionEditor({ question, onUpdate, allQuestions }: any) {
           </div>
         )}
 
-        {/* Conditional Logic */}
         <Separator />
         <div className="space-y-3">
           <div className="flex items-center space-x-2">
