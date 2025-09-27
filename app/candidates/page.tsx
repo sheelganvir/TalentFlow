@@ -18,7 +18,7 @@ const candidatesData = [
     position: "Senior Frontend Developer",
     status: "Interview",
     rating: 4.8,
-    appliedDate: "2024-01-15",
+    appliedDate: "2025-09-15",
     avatar: "/professional-woman-diverse.png",
   },
   {
@@ -30,7 +30,7 @@ const candidatesData = [
     position: "Full Stack Engineer",
     status: "Screening",
     rating: 4.6,
-    appliedDate: "2024-01-18",
+    appliedDate: "2025-09-18",
     avatar: "/professional-man.jpg",
   },
   {
@@ -42,7 +42,7 @@ const candidatesData = [
     position: "UX Designer",
     status: "Offer",
     rating: 4.9,
-    appliedDate: "2024-01-12",
+    appliedDate: "2025-09-23",
     avatar: "/professional-woman-designer.png",
   },
   {
@@ -54,7 +54,7 @@ const candidatesData = [
     position: "DevOps Engineer",
     status: "Applied",
     rating: 4.4,
-    appliedDate: "2024-01-20",
+    appliedDate: "2025-09-20",
     avatar: "/professional-engineer.png",
   },
   {
@@ -66,7 +66,7 @@ const candidatesData = [
     position: "Product Manager",
     status: "Interview",
     rating: 4.7,
-    appliedDate: "2024-01-16",
+    appliedDate: "2025-09-26",
     avatar: "/professional-woman-manager.png",
   },
   {
@@ -78,7 +78,7 @@ const candidatesData = [
     position: "Backend Developer",
     status: "Screening",
     rating: 4.5,
-    appliedDate: "2024-01-19",
+    appliedDate: "2025-09-19",
     avatar: "/professional-man-developer.png",
   },
 ]
@@ -130,7 +130,7 @@ export default function CandidatesPage() {
             </div>
 
             {/* Navigation */}
-            <nav className="flex items-center space-x-1">
+            <nav className="flex items-center space-x-4">
               <Link href="/">
                 <Button variant="ghost" size="sm" className="rounded-full">
                   Dashboard

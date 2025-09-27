@@ -68,7 +68,7 @@ export default function Dashboard() {
             </div>
 
             {/* Navigation */}
-            <nav className="flex items-center space-x-1">
+            <nav className="flex items-center space-x-4">
               <Button variant="default" size="sm" className="rounded-full">
                 Dashboard
               </Button>

@@ -31,7 +31,7 @@ const assessmentsData = [
     questions: 25,
     candidates: 12,
     status: "Active",
-    createdDate: "2024-01-10",
+    createdDate: "2025-09-16",
     completionRate: 85,
   },
   {
@@ -43,7 +43,7 @@ const assessmentsData = [
     questions: 8,
     candidates: 6,
     status: "Draft",
-    createdDate: "2024-01-15",
+    createdDate: "2025-09-22",
     completionRate: 0,
   },
   {
@@ -55,7 +55,7 @@ const assessmentsData = [
     questions: 5,
     candidates: 8,
     status: "Active",
-    createdDate: "2024-01-08",
+    createdDate: "2025-09-18",
     completionRate: 92,
   },
   {
@@ -67,7 +67,7 @@ const assessmentsData = [
     questions: 15,
     candidates: 18,
     status: "Active",
-    createdDate: "2024-01-05",
+    createdDate: "2025-09-25",
     completionRate: 78,
   },
   {
@@ -79,7 +79,7 @@ const assessmentsData = [
     questions: 12,
     candidates: 4,
     status: "Paused",
-    createdDate: "2024-01-12",
+    createdDate: "2025-09-19",
     completionRate: 67,
   },
   {
@@ -91,7 +91,7 @@ const assessmentsData = [
     questions: 20,
     candidates: 9,
     status: "Active",
-    createdDate: "2024-01-14",
+    createdDate: "2025-09-27",
     completionRate: 89,
   },
 ]
@@ -176,7 +176,7 @@ export default function AssessmentsPage() {
             </div>
 
             {/* Navigation */}
-            <nav className="flex items-center space-x-1">
+            <nav className="flex items-center space-x-4">
               <Link href="/">
                 <Button variant="ghost" size="sm" className="rounded-full">
                   Dashboard
