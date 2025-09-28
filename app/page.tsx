@@ -5,7 +5,7 @@ import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Settings, Moon, Sun, Plus, Briefcase, Users, UserCheck, FileText, TrendingUp } from "lucide-react"
+import { Settings, Moon, Sun, Briefcase, Users, UserCheck, FileText, TrendingUp } from "lucide-react"
 import {
   AreaChart,
   Area,
@@ -32,11 +32,11 @@ const candidatesData = [
 ]
 
 const pipelineData = [
-  { name: "Applied", value: 45, color: "#8884d8" },
-  { name: "Screening", value: 32, color: "#82ca9d" },
-  { name: "Interview", value: 28, color: "#ffc658" },
-  { name: "Offer", value: 15, color: "#ff7300" },
-  { name: "Hired", value: 12, color: "#00ff00" },
+  { name: "Applied", value: 45, color: "#CF9700" },
+  { name: "Screening", value: 32, color: "#00CF97" },
+  { name: "Interview", value: 28, color: "#9600CE" },
+  { name: "Offer", value: 15, color: "#8B3DFF" },
+  { name: "Hired", value: 12, color: "#8884d8" },
 ]
 
 const jobOpeningsData = [
@@ -54,7 +54,7 @@ const recentJobs = [
     title: "Senior Frontend Developer",
     department: "Engineering",
     status: "published",
-    createdAt: "2024-01-15",
+    createdAt: "2025-09-25",
     applicants: 24,
   },
   {
@@ -62,7 +62,7 @@ const recentJobs = [
     title: "Backend Engineer",
     department: "Engineering",
     status: "published",
-    createdAt: "2024-01-20",
+    createdAt: "2025-09-28",
     applicants: 31,
   },
   {
@@ -70,7 +70,7 @@ const recentJobs = [
     title: "DevOps Engineer",
     department: "Engineering",
     status: "draft",
-    createdAt: "2024-01-16",
+    createdAt: "2025-09-24",
     applicants: 15,
   },
   {
@@ -78,7 +78,7 @@ const recentJobs = [
     title: "UX Designer",
     department: "Design",
     status: "draft",
-    createdAt: "2024-01-10",
+    createdAt: "2025-09-22",
     applicants: 12,
   },
   {
@@ -86,7 +86,7 @@ const recentJobs = [
     title: "Content Strategist",
     department: "Marketing",
     status: "published",
-    createdAt: "2024-01-14",
+    createdAt: "2025-09-26",
     applicants: 10,
   },
 ]
@@ -97,7 +97,7 @@ const recentCandidates = [
     name: "David Kim",
     position: "DevOps Engineer",
     status: "Applied",
-    appliedDate: "2024-01-20",
+    appliedDate: "2025-09-28",
     avatar: "/professional-engineer.png",
   },
   {
@@ -105,7 +105,7 @@ const recentCandidates = [
     name: "James Wilson",
     position: "Backend Developer",
     status: "Screening",
-    appliedDate: "2024-01-19",
+    appliedDate: "2025-09-27",
     avatar: "/professional-man-developer.png",
   },
   {
@@ -113,23 +113,23 @@ const recentCandidates = [
     name: "Sarah Johnson",
     position: "Senior Frontend Developer",
     status: "Interview",
-    appliedDate: "2024-01-15",
+    appliedDate: "2025-09-25",
     avatar: "/professional-woman-diverse.png",
   },
   {
     id: 5,
     name: "Lisa Thompson",
     position: "Product Manager",
-    status: "Interview",
-    appliedDate: "2024-01-16",
+    status: "Offer",
+    appliedDate: "2025-09-24",
     avatar: "/professional-woman-manager.png",
   },
   {
     id: 3,
     name: "Emily Rodriguez",
     position: "UX Designer",
-    status: "Offer",
-    appliedDate: "2024-01-12",
+    status: "Hired",
+    appliedDate: "2025-09-22",
     avatar: "/professional-woman-designer.png",
   },
 ]
@@ -140,7 +140,7 @@ const recentAssessments = [
     title: "UX Designer Portfolio Review",
     type: "Portfolio",
     status: "Draft",
-    createdDate: "2024-01-15",
+    createdDate: "2025-09-25",
     candidates: 6,
   },
   {
@@ -148,7 +148,7 @@ const recentAssessments = [
     title: "Data Analyst SQL Assessment",
     type: "Technical",
     status: "Active",
-    createdDate: "2024-01-14",
+    createdDate: "2025-09-26",
     candidates: 9,
   },
   {
@@ -156,7 +156,7 @@ const recentAssessments = [
     title: "Sales Representative Simulation",
     type: "Behavioral",
     status: "Paused",
-    createdDate: "2024-01-12",
+    createdDate: "2025-09-24",
     candidates: 4,
   },
   {
@@ -164,7 +164,7 @@ const recentAssessments = [
     title: "Frontend Developer Technical Assessment",
     type: "Technical",
     status: "Active",
-    createdDate: "2024-01-10",
+    createdDate: "2025-09-23",
     candidates: 12,
   },
   {
@@ -172,7 +172,7 @@ const recentAssessments = [
     title: "Product Manager Case Study",
     type: "Case Study",
     status: "Active",
-    createdDate: "2024-01-08",
+    createdDate: "2025-09-21",
     candidates: 8,
   },
 ]
@@ -180,9 +180,9 @@ const recentAssessments = [
 const getJobStatusColor = (status: string) => {
   switch (status) {
     case "published":
-      return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
+      return "bg-teal text-teal-foreground"
     case "draft":
-      return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
+      return "bg-amber text-amber-foreground"
     case "archived":
       return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300"
     default:
@@ -193,11 +193,11 @@ const getJobStatusColor = (status: string) => {
 const getCandidateStatusColor = (status: string) => {
   switch (status) {
     case "Applied":
-      return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300"
+      return "bg-amber text-amber-foreground"
     case "Screening":
-      return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
+      return "bg-teal text-teal-foreground"
     case "Interview":
-      return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300"
+      return "bg-purple text-purple-foreground"
     case "Offer":
       return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
     default:
@@ -208,11 +208,11 @@ const getCandidateStatusColor = (status: string) => {
 const getAssessmentStatusColor = (status: string) => {
   switch (status) {
     case "Active":
-      return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
+      return "bg-teal text-teal-foreground"
     case "Draft":
       return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300"
     case "Paused":
-      return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
+      return "bg-amber text-amber-foreground"
     case "Archived":
       return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
     default:
@@ -236,8 +236,15 @@ export default function Dashboard() {
           <div className="flex items-center justify-between">
             {/* Logo and Brand */}
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-primary rounded-full"></div>
-              <span className="text-xl font-bold">TALENTFLOW</span>
+              <img
+                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/talentflow-logo-4TjqXtXrX6vfXNMoAPnDMg8xsE4ggh.png"
+                alt="TalentFlow logo"
+                className="w-8 h-8"
+                width={32}
+                height={32}
+                decoding="async"
+              />
+              <span className="text-xl font-bold text-primary">TALENTFLOW</span>
             </div>
 
             {/* Navigation */}
@@ -279,58 +286,58 @@ export default function Dashboard() {
       <main className="container mx-auto px-6 py-8 pl-16">
         {/* Page Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-balance">TalentFlow Dashboard</h1>
+          <h1 className="text-3xl font-bold text-balance text-primary">TalentFlow Dashboard</h1>
           <p className="text-muted-foreground mt-2">Overview of jobs, candidates, and assessments</p>
         </div>
 
         {/* KPI Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card className="hover:shadow-lg transition-shadow duration-200">
+          <Card className="hover:shadow-lg transition-shadow duration-200 border-l-4 border-l-amber">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Active Jobs</CardTitle>
-              <Briefcase className="h-4 w-4 text-muted-foreground" />
+              <Briefcase className="h-4 w-4 text-amber" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">24</div>
-              <p className="text-xs text-green-600 flex items-center">
+              <p className="text-xs text-teal flex items-center">
                 <TrendingUp className="h-3 w-3 mr-1" />
                 +12%
               </p>
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-shadow duration-200">
+          <Card className="hover:shadow-lg transition-shadow duration-200 border-l-4 border-l-teal">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Candidates in Pipeline</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
+              <Users className="h-4 w-4 text-teal" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">156</div>
-              <p className="text-xs text-green-600 flex items-center">
+              <p className="text-xs text-teal flex items-center">
                 <TrendingUp className="h-3 w-3 mr-1" />
                 +8%
               </p>
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-shadow duration-200">
+          <Card className="hover:shadow-lg transition-shadow duration-200 border-l-4 border-l-purple">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Hires this Month</CardTitle>
-              <UserCheck className="h-4 w-4 text-muted-foreground" />
+              <UserCheck className="h-4 w-4 text-purple" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">12</div>
-              <p className="text-xs text-green-600 flex items-center">
+              <p className="text-xs text-teal flex items-center">
                 <TrendingUp className="h-3 w-3 mr-1" />
                 +25%
               </p>
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-shadow duration-200">
+          <Card className="hover:shadow-lg transition-shadow duration-200 border-l-4 border-l-primary">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Assessments Created</CardTitle>
-              <FileText className="h-4 w-4 text-muted-foreground" />
+              <FileText className="h-4 w-4 text-primary" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">38</div>
@@ -371,15 +378,25 @@ export default function Dashboard() {
               </ResponsiveContainer>
               <div className="mt-4 space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span>Applied: 45</span>
-                  <span>Screening: 32</span>
+                  <span className="flex items-center">
+                    <span className="w-3 h-3 bg-amber rounded-full mr-2"></span>Applied: 45
+                  </span>
+                  <span className="flex items-center">
+                    <span className="w-3 h-3 bg-teal rounded-full mr-2"></span>Screening: 32
+                  </span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span>Interview: 28</span>
-                  <span>Offer: 15</span>
+                  <span className="flex items-center">
+                    <span className="w-3 h-3 bg-purple rounded-full mr-2"></span>Interview: 28
+                  </span>
+                  <span className="flex items-center">
+                    <span className="w-3 h-3 bg-primary rounded-full mr-2"></span>Offer: 15
+                  </span>
                 </div>
                 <div className="text-sm">
-                  <span>Hired: 12</span>
+                  <span className="flex items-center">
+                    <span className="w-3 h-3 bg-blue-500 rounded-full mr-2"></span>Hired: 12
+                  </span>
                 </div>
               </div>
             </CardContent>
@@ -398,7 +415,7 @@ export default function Dashboard() {
                   <XAxis dataKey="week" />
                   <YAxis />
                   <Tooltip />
-                  <Area type="monotone" dataKey="candidates" stroke="#8884d8" fill="#8884d8" fillOpacity={0.3} />
+                  <Area type="monotone" dataKey="candidates" stroke="#00CF97" fill="#00CF97" fillOpacity={0.3} />
                 </AreaChart>
               </ResponsiveContainer>
             </CardContent>
@@ -417,7 +434,7 @@ export default function Dashboard() {
                   <XAxis dataKey="month" />
                   <YAxis />
                   <Tooltip />
-                  <Bar dataKey="openings" fill="#8884d8" />
+                  <Bar dataKey="openings" fill="#9600CE" />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>
@@ -529,14 +546,6 @@ export default function Dashboard() {
           </Card>
         </div>
       </main>
-
-      {/* Floating Action Button */}
-      <Button
-        size="icon"
-        className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 animate-bounce"
-      >
-        <Plus className="h-6 w-6" />
-      </Button>
     </div>
   )
 }

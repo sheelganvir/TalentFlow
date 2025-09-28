@@ -51,7 +51,7 @@ export const assessmentsData: Assessment[] = [
     questions: 25,
     candidates: 12,
     status: "Active",
-    createdDate: "2024-01-10",
+    createdDate: "2025-09-23",
     completionRate: 85,
     sections: [
       {
@@ -152,7 +152,7 @@ export const assessmentsData: Assessment[] = [
     questions: 8,
     candidates: 6,
     status: "Draft",
-    createdDate: "2024-01-15",
+    createdDate: "2025-09-25",
     completionRate: 0,
     sections: [
       {
@@ -214,7 +214,7 @@ export const assessmentsData: Assessment[] = [
     questions: 5,
     candidates: 8,
     status: "Active",
-    createdDate: "2024-01-08",
+    createdDate: "2025-09-21",
     completionRate: 92,
     sections: [
       {
@@ -263,7 +263,7 @@ export const assessmentsData: Assessment[] = [
     questions: 15,
     candidates: 18,
     status: "Active",
-    createdDate: "2024-01-05",
+    createdDate: "2025-09-22",
     completionRate: 78,
     sections: [
       {
@@ -332,7 +332,7 @@ export const assessmentsData: Assessment[] = [
     questions: 12,
     candidates: 4,
     status: "Paused",
-    createdDate: "2024-01-12",
+    createdDate: "2025-09-24",
     completionRate: 67,
     sections: [
       {
@@ -388,7 +388,7 @@ export const assessmentsData: Assessment[] = [
     questions: 20,
     candidates: 9,
     status: "Active",
-    createdDate: "2024-01-14",
+    createdDate: "2025-09-26",
     completionRate: 89,
     sections: [
       {

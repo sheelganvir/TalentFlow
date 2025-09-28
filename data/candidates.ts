@@ -297,10 +297,10 @@ const generateCandidatesData = () => {
     const rating = (seededRandom(seed + 9) * 1.5 + 3.5).toFixed(1)
     const avatar = avatars[Math.floor(seededRandom(seed + 10) * avatars.length)]
 
-    // Generate random application date within the last 60 days
-    const daysAgo = Math.floor(seededRandom(seed + 11) * 60)
-    const appliedDate = new Date()
-    appliedDate.setDate(appliedDate.getDate() - daysAgo)
+    const baseDate = new Date("2025-09-21")
+    const randomDays = Math.floor(seededRandom(seed + 11) * 8) // 0-7 days from Sept 21
+    const appliedDate = new Date(baseDate)
+    appliedDate.setDate(baseDate.getDate() + randomDays)
 
     // Generate timeline based on status
     const timeline = [
@@ -313,7 +313,8 @@ const generateCandidatesData = () => {
 
     if (status !== "Applied") {
       const screeningDate = new Date(appliedDate)
-      screeningDate.setDate(screeningDate.getDate() + Math.floor(seededRandom(seed + 12) * 5) + 1)
+      const screeningDaysToAdd = Math.min(Math.floor(seededRandom(seed + 12) * 5) + 1, 28 - appliedDate.getDate())
+      screeningDate.setDate(screeningDate.getDate() + screeningDaysToAdd)
       timeline.push({
         status: "Screening",
         date: screeningDate.toISOString().split("T")[0],
@@ -323,7 +324,8 @@ const generateCandidatesData = () => {
 
     if (status === "Interview" || status === "Offer") {
       const interviewDate = new Date(appliedDate)
-      interviewDate.setDate(interviewDate.getDate() + Math.floor(seededRandom(seed + 13) * 10) + 5)
+      const interviewDaysToAdd = Math.min(Math.floor(seededRandom(seed + 13) * 10) + 5, 28 - appliedDate.getDate())
+      interviewDate.setDate(interviewDate.getDate() + interviewDaysToAdd)
       timeline.push({
         status: "Interview",
         date: interviewDate.toISOString().split("T")[0],
@@ -333,7 +335,8 @@ const generateCandidatesData = () => {
 
     if (status === "Offer") {
       const offerDate = new Date(appliedDate)
-      offerDate.setDate(offerDate.getDate() + Math.floor(seededRandom(seed + 14) * 15) + 10)
+      const offerDaysToAdd = Math.min(Math.floor(seededRandom(seed + 14) * 15) + 10, 28 - appliedDate.getDate())
+      offerDate.setDate(offerDate.getDate() + offerDaysToAdd)
       timeline.push({
         status: "Offer",
         date: offerDate.toISOString().split("T")[0],

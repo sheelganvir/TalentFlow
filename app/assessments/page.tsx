@@ -166,8 +166,15 @@ export default function AssessmentsPage() {
           <div className="flex items-center justify-between">
             {/* Logo and Brand */}
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-primary rounded-full"></div>
-              <span className="text-xl font-bold">TALENTFLOW</span>
+              <img
+                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/talentflow-logo-4TjqXtXrX6vfXNMoAPnDMg8xsE4ggh.png"
+                alt="TalentFlow logo"
+                className="w-8 h-8"
+                width={32}
+                height={32}
+                decoding="async"
+              />
+              <span className="text-xl font-bold text-primary">TALENTFLOW</span>
             </div>
 
             {/* Navigation */}
@@ -210,7 +217,7 @@ export default function AssessmentsPage() {
         {/* Page Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-balance">Assessments</h1>
+            <h1 className="text-3xl font-bold text-balance text-primary">Assessments</h1>
             <p className="text-muted-foreground mt-2">Create and manage candidate assessments</p>
           </div>
           <Link href="/assessments/builder/new">
@@ -264,74 +271,75 @@ export default function AssessmentsPage() {
         </div>
 
         {/* Assessments Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredAssessments.map((assessment) => (
             <Card key={assessment.id} className="hover:shadow-lg transition-shadow duration-200">
-              <CardHeader className="pb-4">
+              <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <Badge className={getTypeColor(assessment.type)}>{assessment.type}</Badge>
-                      <Badge className={getStatusColor(assessment.status)}>
+                    <div className="flex items-center space-x-1 mb-2">
+                      <Badge className={`text-xs ${getTypeColor(assessment.type)}`}>{assessment.type}</Badge>
+                      <Badge className={`text-xs ${getStatusColor(assessment.status)}`}>
                         <div className="flex items-center space-x-1">
                           {getStatusIcon(assessment.status)}
                           <span>{assessment.status}</span>
                         </div>
                       </Badge>
                     </div>
-                    <CardTitle className="text-lg mb-2">{assessment.title}</CardTitle>
-                    <p className="text-sm text-muted-foreground">{assessment.description}</p>
+                    <CardTitle className="text-base mb-1 line-clamp-2">{assessment.title}</CardTitle>
+                    <p className="text-xs text-muted-foreground line-clamp-2">{assessment.description}</p>
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-3">
                 {/* Assessment Stats */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="flex items-center space-x-2 text-sm">
-                    <Clock className="h-4 w-4 text-muted-foreground" />
-                    <span>{assessment.duration} minutes</span>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="flex items-center space-x-1 text-xs">
+                    <Clock className="h-3 w-3 text-muted-foreground" />
+                    <span>{assessment.duration}m</span>
                   </div>
-                  <div className="flex items-center space-x-2 text-sm">
-                    <FileText className="h-4 w-4 text-muted-foreground" />
-                    <span>{assessment.questions} questions</span>
+                  <div className="flex items-center space-x-1 text-xs">
+                    <FileText className="h-3 w-3 text-muted-foreground" />
+                    <span>{assessment.questions}q</span>
                   </div>
-                  <div className="flex items-center space-x-2 text-sm">
-                    <Users className="h-4 w-4 text-muted-foreground" />
-                    <span>{assessment.candidates} candidates</span>
+                  <div className="flex items-center space-x-1 text-xs">
+                    <Users className="h-3 w-3 text-muted-foreground" />
+                    <span>{assessment.candidates}</span>
                   </div>
-                  <div className="flex items-center space-x-2 text-sm">
-                    <CheckCircle className="h-4 w-4 text-muted-foreground" />
-                    <span>{assessment.completionRate}% completion</span>
+                  <div className="flex items-center space-x-1 text-xs">
+                    <CheckCircle className="h-3 w-3 text-muted-foreground" />
+                    <span>{assessment.completionRate}%</span>
                   </div>
                 </div>
 
                 {/* Progress Bar */}
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span>Completion Rate</span>
+                <div className="space-y-1">
+                  <div className="flex justify-between text-xs">
+                    <span>Completion</span>
                     <span>{assessment.completionRate}%</span>
                   </div>
-                  <div className="w-full bg-muted rounded-full h-2">
+                  <div className="w-full bg-muted rounded-full h-1.5">
                     <div
-                      className="bg-primary h-2 rounded-full transition-all duration-300"
+                      className="bg-primary h-1.5 rounded-full transition-all duration-300"
                       style={{ width: `${assessment.completionRate}%` }}
                     ></div>
                   </div>
                 </div>
 
                 {/* Created Date */}
-                <p className="text-xs text-muted-foreground">
-                  Created on {new Date(assessment.createdDate).toLocaleDateString()}
-                </p>
+                <p className="text-xs text-muted-foreground">{new Date(assessment.createdDate).toLocaleDateString()}</p>
 
                 {/* Action Buttons */}
-                <div className="flex space-x-2 pt-2">
-                  <Button size="sm" className="flex-1">
-                    View Results
+                <div className="flex space-x-1 pt-1">
+                  <Button
+                    size="sm"
+                    className="flex-1 text-xs h-7 bg-[#00CE97] hover:bg-[#00CE97]/90 text-white border-[#00CE97]"
+                  >
+                    Results
                   </Button>
                   <Link href={`/assessments/builder/${assessment.id}`}>
-                    <Button variant="outline" size="sm" className="flex-1 bg-transparent">
-                      Edit Assessment
+                    <Button variant="outline" size="sm" className="flex-1 bg-transparent text-xs h-7">
+                      Edit
                     </Button>
                   </Link>
                   <AlertDialog>
@@ -339,13 +347,13 @@ export default function AssessmentsPage() {
                       <Button
                         variant="outline"
                         size="sm"
-                        className="px-3 text-red-600 hover:text-white hover:bg-red-600 border-red-200 hover:border-red-600 bg-transparent"
+                        className="px-2 text-red-600 hover:text-white hover:bg-red-600 border-red-200 hover:border-red-600 bg-transparent h-7"
                         disabled={deletingId === assessment.id}
                       >
                         {deletingId === assessment.id ? (
-                          <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                          <div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
                         ) : (
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="h-3 w-3" />
                         )}
                       </Button>
                     </AlertDialogTrigger>

@@ -116,8 +116,15 @@ export default function JobDetailPage() {
           <div className="flex items-center justify-between">
             {/* Logo and Brand */}
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-primary rounded-full"></div>
-              <span className="text-xl font-bold">TALENTFLOW</span>
+              <img
+                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/talentflow-logo-4TjqXtXrX6vfXNMoAPnDMg8xsE4ggh.png"
+                alt="TalentFlow logo"
+                className="w-8 h-8"
+                width={32}
+                height={32}
+                decoding="async"
+              />
+              <span className="text-xl font-bold text-primary">TALENTFLOW</span>
             </div>
 
             {/* Navigation */}
@@ -179,7 +186,7 @@ export default function JobDetailPage() {
               <span className="text-sm text-muted-foreground">#{job.id}</span>
             </div>
 
-            <h1 className="text-4xl font-bold mb-4 text-balance">{job.title}</h1>
+            <h1 className="text-4xl font-bold mb-4 text-balance text-primary">{job.title}</h1>
 
             <div className="flex flex-wrap items-center gap-4 text-muted-foreground mb-6">
               <div className="flex items-center space-x-2">

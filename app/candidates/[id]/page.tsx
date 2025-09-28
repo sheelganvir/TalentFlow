@@ -61,7 +61,7 @@ export default function CandidateDetailPage() {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-2">Candidate Not Found</h1>
+          <h1 className="text-2xl font-bold mb-2 text-primary">Candidate Not Found</h1>
           <p className="text-muted-foreground mb-4">The candidate you're looking for doesn't exist.</p>
           <Link href="/candidates">
             <Button>
@@ -123,17 +123,29 @@ export default function CandidateDetailPage() {
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
+              {/* Brand Logo */}
+              <img
+                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/talentflow-logo-4TjqXtXrX6vfXNMoAPnDMg8xsE4ggh.png"
+                alt="TalentFlow logo"
+                className="w-8 h-8"
+                width={32}
+                height={32}
+                decoding="async"
+              />
+              {/* Back Button */}
               <Link href="/candidates">
                 <Button variant="ghost" size="sm">
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Back to Candidates
                 </Button>
               </Link>
+              {/* Candidate Name and Position */}
               <div>
-                <h1 className="text-xl font-bold">{candidate.name}</h1>
+                <h1 className="text-xl font-bold text-primary">{candidate.name}</h1>
                 <p className="text-sm text-muted-foreground">{candidate.position}</p>
               </div>
             </div>
+            {/* Action Buttons */}
             <div className="flex items-center space-x-2">
               <Button size="sm">
                 <MessageSquare className="h-4 w-4 mr-2" />
@@ -149,7 +161,7 @@ export default function CandidateDetailPage() {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-6 py-8">
+      <main className="container mx-auto px-6 py-8 pl-16">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column - Profile Info */}
           <div className="lg:col-span-2 space-y-6">
@@ -163,7 +175,7 @@ export default function CandidateDetailPage() {
                     className="w-24 h-24 rounded-full object-cover"
                   />
                   <div className="flex-1">
-                    <h2 className="text-2xl font-bold">{candidate.name}</h2>
+                    <h2 className="text-2xl font-bold text-primary">{candidate.name}</h2>
                     <p className="text-lg text-muted-foreground mb-3">{candidate.position}</p>
                     <div className="flex items-center space-x-4 mb-4">
                       <Badge className={getStatusColor(candidate.status)}>{candidate.status}</Badge>

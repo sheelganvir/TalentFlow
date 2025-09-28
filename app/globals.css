@@ -4,14 +4,15 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: oklch(1 0 0);
+  --background: #fafafa;
   --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
+  --card: #ffffff;
   --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
+  --popover: #ffffff;
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
+  /* set brand primary to #8B3DFF and ensure readable foreground (white) */
+  --primary: #8b3dff;
+  --primary-foreground: #ffffff;
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
@@ -26,28 +27,45 @@
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-4: #8b3dff;
   --chart-5: oklch(0.769 0.188 70.08);
   --radius: 0.625rem;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
+  /* align sidebar primary with brand */
+  --sidebar-primary: #8b3dff;
+  --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: oklch(0.97 0 0);
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* Adding vibrant secondary colors from user's palette */
+  --color-amber: #cf9700;
+  --color-amber-foreground: #ffffff;
+  --color-teal: #00cf97;
+  --color-teal-foreground: #ffffff;
+  --color-purple: #9600ce;
+  --color-purple-foreground: #ffffff;
+
+  /* Updated chart colors to use vibrant palette */
+  --chart-1: #cf9700;
+  --chart-2: #00cf97;
+  --chart-3: #9600ce;
+  --chart-4: #8b3dff;
+  --chart-5: #8884d8;
 }
 
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.145 0 0);
+  --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.145 0 0);
+  --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.205 0 0);
+  /* use brand primary in dark mode too, with white text */
+  --primary: #8b3dff;
+  --primary-foreground: #ffffff;
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
@@ -62,16 +80,32 @@
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-4: #8b3dff;
   --chart-5: oklch(0.645 0.246 16.439);
+  /* align sidebar primary with brand in dark mode */
+  --sidebar-primary: #8b3dff;
+  --sidebar-primary-foreground: #ffffff;
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
   --sidebar-accent: oklch(0.269 0 0);
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(0.269 0 0);
   --sidebar-ring: oklch(0.439 0 0);
+
+  /* Vibrant colors remain the same in dark mode for consistency */
+  --color-amber: #cf9700;
+  --color-amber-foreground: #ffffff;
+  --color-teal: #00cf97;
+  --color-teal-foreground: #ffffff;
+  --color-purple: #9600ce;
+  --color-purple-foreground: #ffffff;
+
+  /* Updated dark mode chart colors */
+  --chart-1: #cf9700;
+  --chart-2: #00cf97;
+  --chart-3: #9600ce;
+  --chart-4: #8b3dff;
+  --chart-5: #8884d8;
 }
 
 @theme inline {
@@ -113,6 +147,54 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Adding vibrant color utilities */
+  --color-amber: var(--color-amber);
+  --color-amber-foreground: var(--color-amber-foreground);
+  --color-teal: var(--color-teal);
+  --color-teal-foreground: var(--color-teal-foreground);
+  --color-purple: var(--color-purple);
+  --color-purple-foreground: var(--color-purple-foreground);
+}
+
+/* Adding utility classes for vibrant colors */
+@layer utilities {
+  .bg-amber {
+    background-color: var(--color-amber);
+  }
+  .text-amber {
+    color: var(--color-amber);
+  }
+  .text-amber-foreground {
+    color: var(--color-amber-foreground);
+  }
+  .bg-teal {
+    background-color: var(--color-teal);
+  }
+  .text-teal {
+    color: var(--color-teal);
+  }
+  .text-teal-foreground {
+    color: var(--color-teal-foreground);
+  }
+  .bg-purple {
+    background-color: var(--color-purple);
+  }
+  .text-purple {
+    color: var(--color-purple);
+  }
+  .text-purple-foreground {
+    color: var(--color-purple-foreground);
+  }
+  .border-amber {
+    border-color: var(--color-amber);
+  }
+  .border-teal {
+    border-color: var(--color-teal);
+  }
+  .border-purple {
+    border-color: var(--color-purple);
+  }
 }
 
 @layer base {

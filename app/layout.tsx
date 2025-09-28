@@ -1,12 +1,14 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { GeistSans } from "geist/font/sans"
-import { GeistMono } from "geist/font/mono"
-import { Analytics } from "@vercel/analytics/next"
+import { Inter, Roboto_Mono } from "next/font/google"
 import "./globals.css"
-import FloatingSidebar from "@/components/floating-sidebar"
 import { Suspense } from "react"
 import { MSWProvider } from "@/components/msw-provider"
+import SiteFooter from "@/components/site-footer"
+import FloatingSidebar from "@/components/floating-sidebar"
+
+const geistSans = Inter({ subsets: ["latin"], variable: "--font-geist-sans" })
+const geistMono = Roboto_Mono({ subsets: ["latin"], variable: "--font-geist-mono" })
 
 export const metadata: Metadata = {
   title: "TalentFlow",
@@ -21,14 +23,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
+      <body className={`font-sans ${geistSans.variable} ${geistMono.variable}`}>
         <MSWProvider>
           <Suspense>
             <FloatingSidebar />
             {children}
+            <SiteFooter />
           </Suspense>
         </MSWProvider>
-        <Analytics />
+        {/* <Analytics /> */}
       </body>
     </html>
   )

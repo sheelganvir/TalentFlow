@@ -29,6 +29,7 @@ import {
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd"
 import { getAssessmentById } from "@/data/assessments"
 import { assessmentsApi } from "@/lib/api/assessments"
+import { useTheme } from "next-themes"
 
 // Question types
 const QUESTION_TYPES = [
@@ -75,6 +76,7 @@ export default function AssessmentBuilderPage() {
   const params = useParams()
   const router = useRouter()
   const assessmentId = params.id as string
+  const { theme } = useTheme()
 
   const [assessment, setAssessment] = useState({
     id: assessmentId,
@@ -488,12 +490,22 @@ export default function AssessmentBuilderPage() {
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
+              <img
+                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/talentflow-logo-4TjqXtXrX6vfXNMoAPnDMg8xsE4ggh.png"
+                alt="TalentFlow logo"
+                className="w-8 h-8"
+                width={32}
+                height={32}
+                decoding="async"
+              />
               <Button variant="ghost" size="sm" onClick={() => router.back()}>
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back
               </Button>
               <div>
-                <h1 className="text-xl font-semibold">{assessment.title}</h1>
+                <h1 className={`text-xl font-semibold ${theme === "dark" ? "text-primary" : "text-primary"}`}>
+                  {assessment.title}
+                </h1>
                 <p className="text-sm text-muted-foreground">Assessment Builder</p>
               </div>
             </div>
@@ -535,7 +547,7 @@ export default function AssessmentBuilderPage() {
         </div>
       </header>
 
-      <div className="container mx-auto px-6 py-6">
+      <div className="container mx-auto px-6 py-6 pl-16">
         {activeView === "builder" ? (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">

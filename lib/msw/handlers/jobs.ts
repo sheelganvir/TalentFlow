@@ -14,7 +14,7 @@ const jobs = [
     type: "Full-time",
     description: "We're looking for a senior frontend developer to join our team...",
     requirements: ["5+ years React experience", "TypeScript proficiency", "Next.js knowledge"],
-    postedDate: "2024-01-15",
+    postedDate: "2025-09-25",
     applicants: 24,
   },
   {
@@ -29,7 +29,7 @@ const jobs = [
     type: "Full-time",
     description: "Join our product team to drive strategic initiatives...",
     requirements: ["3+ years PM experience", "Data-driven mindset", "Leadership skills"],
-    postedDate: "2024-01-12",
+    postedDate: "2025-09-24",
     applicants: 18,
   },
   {
@@ -44,7 +44,7 @@ const jobs = [
     type: "Full-time",
     description: "Create exceptional user experiences for our products...",
     requirements: ["Portfolio required", "Figma expertise", "User research experience"],
-    postedDate: "2024-01-08",
+    postedDate: "2025-09-21",
     applicants: 31,
   },
   {
@@ -59,7 +59,7 @@ const jobs = [
     type: "Full-time",
     description: "Build scalable backend systems and APIs...",
     requirements: ["4+ years backend experience", "Database design", "Cloud platforms"],
-    postedDate: "2024-01-20",
+    postedDate: "2025-09-28",
     applicants: 15,
   },
   {
@@ -74,7 +74,7 @@ const jobs = [
     type: "Full-time",
     description: "Manage infrastructure and deployment pipelines...",
     requirements: ["Container orchestration", "Infrastructure as code", "Monitoring"],
-    postedDate: "2024-01-25",
+    postedDate: "2025-09-27",
     applicants: 0,
   },
   {
@@ -89,7 +89,7 @@ const jobs = [
     type: "Full-time",
     description: "Analyze data and build predictive models...",
     requirements: ["Statistics background", "Python/R proficiency", "ML frameworks"],
-    postedDate: "2024-01-18",
+    postedDate: "2025-09-26",
     applicants: 22,
   },
   {
@@ -104,7 +104,7 @@ const jobs = [
     type: "Full-time",
     description: "Drive marketing campaigns and growth initiatives...",
     requirements: ["Marketing experience", "Campaign management", "Analytics tools"],
-    postedDate: "2024-01-22",
+    postedDate: "2025-09-28",
     applicants: 12,
   },
   {
@@ -119,7 +119,7 @@ const jobs = [
     type: "Full-time",
     description: "Generate leads and close deals with enterprise clients...",
     requirements: ["Sales experience", "CRM proficiency", "Communication skills"],
-    postedDate: "2024-01-05",
+    postedDate: "2025-09-22",
     applicants: 28,
   },
   {
@@ -134,7 +134,7 @@ const jobs = [
     type: "Full-time",
     description: "Ensure product quality through comprehensive testing...",
     requirements: ["Testing frameworks", "Automation tools", "Bug tracking"],
-    postedDate: "2024-01-19",
+    postedDate: "2025-09-27",
     applicants: 9,
   },
   {
@@ -149,7 +149,7 @@ const jobs = [
     type: "Contract",
     description: "Create engaging content for various marketing channels...",
     requirements: ["Writing portfolio", "SEO knowledge", "Content management"],
-    postedDate: "2024-01-26",
+    postedDate: "2025-09-28",
     applicants: 0,
   },
   {
@@ -164,7 +164,7 @@ const jobs = [
     type: "Full-time",
     description: "Develop cross-platform mobile applications...",
     requirements: ["Mobile development", "React Native", "App store deployment"],
-    postedDate: "2024-01-21",
+    postedDate: "2025-09-27",
     applicants: 16,
   },
   {
@@ -179,7 +179,7 @@ const jobs = [
     type: "Full-time",
     description: "Support HR operations and employee lifecycle management...",
     requirements: ["HR experience", "Recruiting skills", "Policy knowledge"],
-    postedDate: "2024-01-17",
+    postedDate: "2025-09-25",
     applicants: 14,
   },
   {
@@ -194,7 +194,7 @@ const jobs = [
     type: "Full-time",
     description: "Analyze financial data and create forecasting models...",
     requirements: ["Finance degree", "Excel expertise", "Financial modeling"],
-    postedDate: "2024-01-03",
+    postedDate: "2025-09-21",
     applicants: 35,
   },
   {
@@ -209,7 +209,7 @@ const jobs = [
     type: "Full-time",
     description: "Ensure customer satisfaction and drive retention...",
     requirements: ["Customer success experience", "SaaS background", "Communication"],
-    postedDate: "2024-01-23",
+    postedDate: "2025-09-28",
     applicants: 11,
   },
   {
@@ -224,7 +224,7 @@ const jobs = [
     type: "Full-time",
     description: "Protect systems and data from security threats...",
     requirements: ["Security certifications", "Penetration testing", "Compliance knowledge"],
-    postedDate: "2024-01-27",
+    postedDate: "2025-09-28",
     applicants: 0,
   },
   {
@@ -239,7 +239,7 @@ const jobs = [
     type: "Full-time",
     description: "Analyze business processes and identify improvements...",
     requirements: ["Business analysis", "Requirements gathering", "Process mapping"],
-    postedDate: "2024-01-16",
+    postedDate: "2025-09-24",
     applicants: 19,
   },
   {
@@ -254,7 +254,7 @@ const jobs = [
     type: "Part-time",
     description: "Create visual designs for marketing and product materials...",
     requirements: ["Design portfolio", "Adobe Creative Suite", "Brand guidelines"],
-    postedDate: "2024-01-24",
+    postedDate: "2025-09-26",
     applicants: 8,
   },
   {
@@ -269,7 +269,7 @@ const jobs = [
     type: "Full-time",
     description: "Oversee daily operations and optimize processes...",
     requirements: ["Operations experience", "Process improvement", "Team management"],
-    postedDate: "2024-01-01",
+    postedDate: "2025-09-21",
     applicants: 42,
   },
   {
@@ -284,7 +284,7 @@ const jobs = [
     type: "Contract",
     description: "Create technical documentation and API guides...",
     requirements: ["Technical writing", "API documentation", "Developer tools"],
-    postedDate: "2024-01-20",
+    postedDate: "2025-09-28",
     applicants: 7,
   },
   {
@@ -299,7 +299,7 @@ const jobs = [
     type: "Full-time",
     description: "Manage social media presence and community engagement...",
     requirements: ["Social media experience", "Content creation", "Analytics"],
-    postedDate: "2024-01-28",
+    postedDate: "2025-09-28",
     applicants: 0,
   },
   {
@@ -314,7 +314,7 @@ const jobs = [
     type: "Full-time",
     description: "Build and deploy machine learning models at scale...",
     requirements: ["ML frameworks", "Model deployment", "Python expertise"],
-    postedDate: "2024-01-14",
+    postedDate: "2025-09-26",
     applicants: 26,
   },
   {
@@ -329,7 +329,7 @@ const jobs = [
     type: "Full-time",
     description: "Provide legal guidance and contract review...",
     requirements: ["Law degree", "Contract law", "Corporate experience"],
-    postedDate: "2023-12-28",
+    postedDate: "2025-09-21",
     applicants: 18,
   },
   {
@@ -344,7 +344,7 @@ const jobs = [
     type: "Full-time",
     description: "Design intuitive product experiences and interfaces...",
     requirements: ["Product design portfolio", "Prototyping tools", "User research"],
-    postedDate: "2024-01-13",
+    postedDate: "2025-09-25",
     applicants: 33,
   },
   {
@@ -359,7 +359,7 @@ const jobs = [
     type: "Full-time",
     description: "Manage enterprise accounts and drive revenue growth...",
     requirements: ["Enterprise sales", "Account management", "Negotiation skills"],
-    postedDate: "2024-01-11",
+    postedDate: "2025-09-23",
     applicants: 21,
   },
   {
@@ -374,7 +374,7 @@ const jobs = [
     type: "Full-time",
     description: "Provide technical support and troubleshoot IT issues...",
     requirements: ["IT support experience", "Troubleshooting skills", "Help desk tools"],
-    postedDate: "2024-01-29",
+    postedDate: "2025-09-28",
     applicants: 0,
   },
 ]
@@ -439,7 +439,7 @@ export const jobHandlers = [
     const job = {
       id: Math.max(...jobs.map((j) => j.id)) + 1,
       ...newJob,
-      postedDate: new Date().toISOString().split("T")[0],
+      postedDate: `2025-09-${21 + Math.floor(Math.random() * 8)}`,
       applicants: 0,
     }
     jobs.push(job)
